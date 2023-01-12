@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  },
+  "name": "delzerhub",
+  "version": "1.0.0",
+  "description": "This is the DDI Employee Hub Website. It will house all the different links needed for our company. Down the line the links will be coded into this website.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kian Moriarty",
+  "license": "ISC"
+}
