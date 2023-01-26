@@ -1,7 +1,154 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<link rel="stylesheet" href="styles.css">
+		<meta charset="UTF-8" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body onload="todays_date(); on_open(); load(); initButtons()">
+
+		<header>
+      <a href="https://delzerhub.glitch.me/"><img src="ddi_logo.png" class="ddi_logo"></a>
+		</header>
+
+		<main align="center">
+      <div style="top: 0; position: -webkit-sticky; position: sticky">
+				<div class="navbar">
+					<a href="https://delzerhub.glitch.me/">Main</a>
+
+					<div class="dropdown">
+						<button class="dropbtn" id="active">All Employees
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a href="https://ddi-timeoffrequests-teammembers.glitch.me/" class="active">Time Off Calendar</a>
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSeUCMjTwtfYFEi7oQhyRG555l1wqJzu3ibgm4PCpunNWJ9LLQ/viewform">Purchase Orders</a>
+						</div>
+					</div>
+
+					<div class="dropdown">
+						<button class="dropbtn">Dispatch
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a href="https://ddi-job-scheduling.glitch.me/">Job Scheduling Calendar</a>
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSdHzZ3z_MvcYBR7bJJCrJfqtcQOApdm18fqL2DWVuGqtUrIng/viewform">Dispatch Call-In</a>
+						</div>
+					</div>
+
+					<div class="dropdown">
+						<button class="dropbtn">Rentbiz
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSecRGVwTR0iOviuFp_V2Fq4AOM4Bf0ewSqygiwQTS4KC5u5Qw/viewform">Transporting Equipment</a>
+						</div>
+					</div>
+
+					<a href="https://delzerhub.glitch.me/about.html" id="aboutnav">About</a>
+				</div>
+			</div>
+
+			<section class="body" id="calendar_container">
+				<div id="header2">
+					<div id="monthDisplay"></div>
+			        <div>
+			          	<button id="backButton">Back</button>
+			         	<button id="nextButton">Next</button>
+			        </div>
+				</div>
+
+				<div id="weekdays" align="center">
+			        <div>Sunday</div>
+			        <div>Monday</div>
+			        <div>Tuesday</div>
+			        <div>Wednesday</div>
+			        <div>Thursday</div>
+			        <div>Friday</div>
+			        <div>Saturday</div>
+      			</div>
+
+      			<div id="calendar"></div>
+			</section>
+
+			<div id="deleteEventModal">
+      			<h2>Edit Time Off</h2>
+
+            <form id="edit_event_form">
+              <label for="dbId">Entry ID</label>
+              <input type="text" id="dbId" placeholder="Entry ID from email">
+              <br><br>
+              
+              <label for="fn">First Name</label>
+              <input type="text" id="fn" disabled>
+              <br><br>
+              
+              <label for="ln">Last Name</label>
+              <input type="text" id="ln" disabled>
+              <br><br>
+              
+              <label for="email">Email Address</label>
+              <input type="text" id="email" disabled>
+              <br><br>
+              
+              <label for="sd">Start Date</label>
+              <input type="date" id="sd">
+              <br><br>
+              
+              <label for="ed">End Date</label>
+              <input type="date" id="ed">
+              <br><br>
+              
+              <p><label for="re">Reason For Request</label></p>
+              <textarea id="re" rows="4" cols="30"></textarea>
+              <br><br>
+            </form>
+          
+            <button id="updateButton">Update</button>
+            &nbsp;
+            <button id="deleteButton">Delete</button>
+            &nbsp;
+            <button id="closeButton">Cancel</button>
+    		</div>
 
 
+    		<div id="modalBackDrop"></div>
 
+			<section class="body">
+				<h2>Request Time Off</h2>
+				<p>To request time off, fill out the form below<br><strong>***Make sure to check the requests for other employees that have already been approved!***</strong></p>
+				<br>
+				<form id="time_off_form">
+					<label for="first name">First Name</label>
+					<input type="text" id="first name" placeholder="*required">
+					<br><br>
 
+					<label for="last name">Last Name</label>
+					<input type="text" id="last name" placeholder="*required">
+					<br><br>
+
+					<label for="user email"> Email Address</label>
+					<input type="email" id="user email" placeholder="username@email_address.com *required" size="35px">
+					<br><br>
+
+					<label for="start date">Start Date</label>
+					<input type="date" id="start date">
+					&nbsp;&nbsp;
+					<label for="end date">End Date</label>
+					<input type="date" id="end date">
+					<br><br>
+					
+					<p><label for="reason">Reason For Request</label></p>
+					<textarea id="reason" rows="4" cols="50" placeholder="Enter the reason for the time off request. *required"></textarea>
+					<br><br>
+					
+					<input class="submit" type="button" value="Submit" onclick="handle_submission()">
+				</form>
+			</section>
+		</main>
+		
+		<script src="https://smtpjs.com/v3/smtp.js"></script>
+		<script type="text/javascript" src="main.js"></script>
+	</body>
 </html>
