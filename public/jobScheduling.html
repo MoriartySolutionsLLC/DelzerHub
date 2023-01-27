@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+		<head>
+				<link rel="stylesheet" href="jobSchedulingStyle.css">
+				<link rel="stylesheet" href="styles.css">
+				<meta charset="UTF-8" />
+				<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+		    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		</head>
+		<body onload="todays_date(); on_open(); load(); initButtons()">
+
+		<header>
+      <a href="index.html"><img src="ddi_logo.png" class="ddi_logo"></a>
+		</header>
+
+
+		<main align="center">
+      <div style="top: 0; position: -webkit-sticky; position: sticky">
+				<div class="navbar">
+					<a href="index.html">Main</a>
+
+					<div class="dropdown">
+						<button class="dropbtn">All Employees
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a href="timeOffCalendar.html">Time Off Calendar</a>
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSeUCMjTwtfYFEi7oQhyRG555l1wqJzu3ibgm4PCpunNWJ9LLQ/viewform">Purchase Orders</a>
+						</div>
+					</div>
+
+					<div class="dropdown">
+						<button class="dropbtn" id="active">Dispatch
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a href="jobScheduling.html" class="active">Job Scheduling Calendar</a>
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSdHzZ3z_MvcYBR7bJJCrJfqtcQOApdm18fqL2DWVuGqtUrIng/viewform">Dispatch Call-In</a>
+						</div>
+					</div>
+
+					<div class="dropdown">
+						<button class="dropbtn">Rentbiz
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSecRGVwTR0iOviuFp_V2Fq4AOM4Bf0ewSqygiwQTS4KC5u5Qw/viewform">Transporting Equipment</a>
+						</div>
+					</div>
+
+					<a href="about.html" id="aboutnav">About</a>
+				</div>
+			</div>
+
+			<section>
+				<br><div class="box dirt">Dirtbiz</div>
+        <div class="box haul">Haulbiz</div>
+        <div class="box seal">Sealbiz</div>
+        <div class="box snow">Snowbiz</div>
+        <div class="box water">Waterbiz</div><br>
+			</section>
+
+			<section id="calendar_container">
+				<div id="header2">
+					<div id="monthDisplay"></div>
+			        <div>
+			          	<button id="backButton">Back</button>
+			         	<button id="nextButton">Next</button>
+			        </div>
+				</div>
+
+				<div id="weekdays" align="center">
+			        <div>Sunday</div>
+			        <div>Monday</div>
+			        <div>Tuesday</div>
+			        <div>Wednesday</div>
+			        <div>Thursday</div>
+			        <div>Friday</div>
+			        <div>Saturday</div>
+      			</div>
+
+      			<div id="calendar"></div>
+			</section>
+
+			<div id="editEventModal">
+      			<h2>Edit Time Off</h2>
+
+            <form id="edit_event_form">
+              <label for="dbId">Entry ID</label>
+              <input type="text" id="dbId" placeholder="Entry ID from email">
+              <br><br>
+              
+              <label for="cn">Customer Name</label>
+              <input type="text" id="cn" disabled>
+              <br><br>
+              
+              <label for="ja">Job Address</label>
+              <input type="text" id="ja" disabled>
+              <br><br>
+              
+              <label for="con">Contact Name</label>
+              <input type="text" id="con">
+              <br><br>
+              
+              <label for="cp">Contact Phone</label>
+              <input type="text" id="cp">
+              <br><br>
+              
+              <label for="cemail">Contact Email</label>
+              <input type="text" id="cemail">
+              <br><br>
+              
+              <label for="en">Your Name</label>
+              <input type="text" id="en" disabled>
+              <br><br>
+              
+              <label for="uemail">Your Email Address</label>
+              <input type="text" id="uemail" disabled>
+              <br><br>
+              
+              <label for="sd">Start Date</label>
+              <input type="date" id="sd">
+              <br><br>
+              
+              <label for="ed">End Date</label>
+              <input type="date" id="ed">
+              <br><br>
+              
+              <label for="jt">Job Type</label>
+              <select id="jt">
+                <option value="">default</option>
+                <option value="dirtbiz">Dirtbiz</option>
+                <option value="haulbiz">Haulbiz</option>
+                <option value="sealbiz">Sealbiz</option>
+                <option value="snowbiz">Snowbiz</option>
+                <option value="waterbiz">Waterbiz</option>
+              </select>
+              <br><br>
+              
+              <p><label for="desc">Brief Description of Job</label></p>
+              <textarea id="desc" rows="4" cols="30"></textarea>
+              <br><br>
+            </form>
+          
+            <button id="updateButton" class="modalBtn">Update</button>
+            &nbsp;
+            <button id="deleteButton" class="modalBtn">Delete</button>
+            &nbsp;
+            <button id="closeButton" class="modalBtn">Cancel</button>
+    		</div>
+
+
+    		<div id="modalBackDrop"></div>
+
+			<section class="body">
+				<h2>Schedule a Job</h2>
+				<p>To schedule a job, fill out the form below<br><strong>***Make sure to enter all the required fields***</strong></p>
+				<br>
+				<form id="time_off_form">
+					<label for="customer name">Customer Name</label>
+					<input type="text" id="customer name" placeholder="*required">
+					<br><br>
+
+					<label for="job address">Job Address</label>
+					<input type="text" id="job address" placeholder="*required">
+					<br><br>
+          
+          <label for="contact name">Contact Name</label>
+          <input type="text" id="contact name" placeholder="*required">
+          <br><br>
+          
+          <label for="contact phone">Contact Phone</label>
+          <input type="text" id="contact phone" placeholder="*required">
+          <br><br>
+          
+          <label for="contact email">Contact Email</label>
+          <input type="email" id="contact email" placeholder="*required">
+          <br><br>
+          
+          <label for="emp name">Your Name</label>
+          <input type="text" id="emp name" placeholder="*required">
+          <br><br>
+
+					<label for="user email">Your Email Address</label>
+					<input type="email" id="user email" placeholder="*required">
+					<br><br>
+
+					<label for="start date">Start Date</label>
+					<input type="date" id="start date">
+					&nbsp;&nbsp;
+					<label for="end date">End Date</label>
+					<input type="date" id="end date">
+					<br><br>
+          
+          <label for="job type">Job Type</label>
+          <select id="job type">
+            <option value="">default</option>
+            <option value="dirtbiz">Dirtbiz</option>
+            <option value="haulbiz">Haulbiz</option>
+            <option value="sealbiz">Sealbiz</option>
+            <option value="snowbiz">Snowbiz</option>
+            <option value="waterbiz">Waterbiz</option>
+          </select>
+          <br><br>
+					
+					<p><label for="description">Brief Description of Job</label></p>
+					<textarea id="description" rows="4" cols="50" placeholder="Enter a brief description of the job requested. *required"></textarea>
+					<br><br>
+					
+					<input class="submit" type="button" value="Submit" onclick="handle_submission()">
+				</form>
+				<hr class="line2">
+			</section>
+		</main>
+		
+		<script src="https://smtpjs.com/v3/smtp.js"></script>
+		<script type="text/javascript" src="jobScheduling.js"></script>
+	</body>
+</html>

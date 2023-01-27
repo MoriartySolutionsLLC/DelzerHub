@@ -1,31 +1,31 @@
 strong {
-	color: red;
-	text-decoration: underline;
+  color: red;
+  text-decoration: underline;
 }
 
 h2 {
-	font-size: 30px;
+  font-size: 30px;
 }
 
 #calendar_container {
-	width: 770px;
-	margin-right: auto;
-	margin-left: auto;
+  width: 770px;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .submit {
   width: 75px;
   cursor: pointer;
-	color: white;
-	border-radius: 5px;
-	background-color: #4B4788;
+  color: white;
+  border-radius: 5px;
+  background-color: #4B4788;
   border: none;
   outline: none;
   padding: 5px;
 }
 
 .submit:hover {
-	background-color: #615C96;
+  background-color: #615C96;
 }
 
 button {
@@ -35,7 +35,7 @@ button {
   outline: none;
   padding: 5px;
   border-radius: 5px;
-	background-color: #4B4788;
+  background-color: #4B4788;
   color: white;
 }
 
@@ -63,10 +63,10 @@ button:hover {
 }
 
 #calendar {
-  	width: 100%;
-  	margin: auto;
-  	display: flex;
-  	flex-wrap: wrap;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .day {
@@ -134,16 +134,101 @@ button:hover {
   background-color: #d36c6c;
 }
 
-#deleteEventModal {
+#editEventModal {
   display: none;
   z-index: 20;
   padding: 25px;
-  background-color: #e8f4fa;
+  background-color: #F5F5F5;
   box-shadow: 0px 0px 3px black;
   border-radius: 5px;
   width: 350px;
   top: 100px;
   left: calc(50% - 175px);
-  position: fixed;
+  position: absolute;
   font-family: sans-serif;
 }
+
+.box { 
+  display:inline-block;
+  text-align: center;
+  color: white;
+  border: 1px solid rgba(0, 0, 0, .2);
+  padding: 0;
+  margin: auto;
+  width: 100px;
+}
+
+.dirt {
+  background: #e1b382;
+}
+
+.haul {
+  background: #9068be;
+}
+
+.seal {
+  background: #3d7c47;
+}
+
+.snow {
+  background: #76c1d4;
+}
+
+.water {
+  background: #101357;
+}
+
+.event {
+  font-size: 10px;
+  padding: 3px;
+  background-color: #58bae4;
+  color: white;
+  max-height: 55px;
+  overflow: hidden;
+}
+
+.dirtbiz {
+  font-size: 10px;
+  padding: 3px;
+  background-color: #e1b382;
+  color: white;
+  max-height: 55px;
+  overflow: hidden;
+}
+
+.haulbiz {
+  font-size: 10px;
+  padding: 3px;
+  background-color: #9068be;
+  color: white;
+  max-height: 55px;
+  overflow: hidden;
+}
+
+.sealbiz {
+  font-size: 10px;
+  padding: 3px;
+  background-color: #3d7c47;
+  color: white;
+  max-height: 55px;
+  overflow: hidden;
+}
+
+.snowbiz {
+  font-size: 10px;
+  padding: 3px;
+  background-color: #76c1d4;
+  color: white;
+  max-height: 55px;
+  overflow: hidden;
+}
+
+.waterbiz {
+  font-size: 10px;
+  padding: 3px;
+  background-color: #101357;
+  color: white;
+  max-height: 55px;
+  overflow: hidden;
+}
+

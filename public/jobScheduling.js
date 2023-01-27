@@ -9,12 +9,17 @@ Read the ReadMe.md file for more information on the website and its uses for our
 */
 
 // initializes form entry variables
-let firstName;
-let lastName;
-let inputEmail;
+let custName;
+let jobAddress;
+let contName;
+let contPhone;
+let contEmail;
+let empName;
+let userEmail;
 let startDate;
 let endDate;
-let reason;
+let jobType;
+let description;
 let toEmail;
 // initializes employee list
 let employeeList = {};
@@ -22,7 +27,7 @@ let employeeList = {};
 let nav = 0;
 const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const calendar = document.getElementById('calendar');
-const deleteEventModal = document.getElementById('deleteEventModal');
+const editEventModal = document.getElementById('editEventModal');
 const backDrop = document.getElementById('modalBackDrop');
 let events = {};
 
@@ -35,15 +40,11 @@ async function on_open(){
 			'Content-Type': 'application/json'
 		}
 	}
-	// requests employee information from the web server and reads the response as json
-	const getEmpDRes = await fetch('/api/employeeData', getOptions);
-	const getEmpDResult = await getEmpDRes.json();
-	// sets the employee list with the result
-	employeeList = getEmpDResult;
 
-	const getEvDRes = await fetch('/api/eventData', getOptions);
+	const getEvDRes = await fetch('/api/eventData_job_scheduling', getOptions);
 	const getEvDResult = await getEvDRes.json();
 	events = getEvDResult;
+  console.log(events[0]);
 	load();
 
 }
@@ -52,28 +53,30 @@ async function on_open(){
 async function handle_submission(){
 
 	// gets the form entries and assigns them to the appropriate variables
-	firstName = fixName(document.getElementById("first name").value);
-	lastName = fixName(document.getElementById("last name").value);
-	inputEmail = document.getElementById("user email").value;
+	custName = document.getElementById("customer name").value;
+	jobAddress = document.getElementById("job address").value;
+  contName = document.getElementById("contact name").value;
+  contPhone = document.getElementById("contact phone").value;
+  contEmail = document.getElementById("contact email").value;
+  empName = document.getElementById("emp name").value;
+	userEmail = document.getElementById("user email").value;
 	startDate = document.getElementById("start date").value;
 	endDate = document.getElementById("end date").value;
-	reason = document.getElementById("reason").value;
+  jobType = document.getElementById("job type").value;
+	description = document.getElementById("description").value;
 
 	// if a required field is not filled out sends an alert
-	if (firstName == "" || lastName == "" || reason == "" || inputEmail == ""){
-
+	if (custName == "" || jobAddress == "" || contName == "" || contPhone == "" || contEmail == "" || empName == "" || userEmail == "" || jobType == "" || description == "") {
 		alert("Must fill out all required fields"); // alerts user to enter all information
-
-	} else if (employeeList.hasOwnProperty(`${firstName} ${lastName}`)) { // if the name entered matches a name from the employee list runs the api post request
-
+  } else {
 		// alerts users that time off was requested
-		alert("Time off Requested");
+		alert("Job has been successfully scheduled.");
 
 		// reloads the page
 		location.reload();
 
 		// creates an object with the form fields
-		const data = {firstName, lastName, inputEmail, startDate, endDate, reason};
+		const data = {custName, jobAddress, contName, contPhone, contEmail, empName, userEmail, startDate, endDate, jobType, description};
 		// creates post options for the api request
 		const postOptions = {
 			method: 'POST',
@@ -83,14 +86,9 @@ async function handle_submission(){
 			body: JSON.stringify(data)
 		}
 		// requests to post form data to the web server and reads the result as json
-		const postRes = await fetch('/api/add_time_off_request', postOptions);
+		const postRes = await fetch('/api/add_job_scheduling', postOptions);
 		const postResult = await postRes.json();
-
-	} else { // if the name entered doesn't match a name from the employee list it alerts the user
-
-		alert("Employee not found in database.\nCheck spelling or contact manager."); // alerts the user that the name was not found in the database
-
-	}
+  }
 }
 
 // function to get the current date and enter it into the forms date fields
@@ -220,46 +218,82 @@ function load() {
         let endMonth = endDay.getMonth() + 1;
         let endD = endDay.getDate();
         if (endMonth == dayMonth && startMonth < dayMonth && dayB == 1){
-        
               let j = i - 1;
               let endDate = false;
+              let hclass = "";
+              switch (events[k].jobType){
+                case "dirtbiz":
+                  hclass = "dirtbiz";
+                  break;
+                case "haulbiz":
+                  hclass = "haulbiz";
+                  break;
+                case "sealbiz":
+                  hclass = "sealbiz";
+                  break;
+                case "snowbiz":
+                  hclass = "snowbiz";
+                  break;
+                case "waterbiz":
+                  hclass = "waterbiz";
+                  break;
+              }
+          
               while(!endDate){
-
-                if (i - paddingDays < 10){
-                    fixDay = `0${j - paddingDays + 1}`;
-                  } else {
-                    fixDay = `${j - paddingDays + 1}`;
-                  }
-                  const tempDayStr = `${year}-${fixMonth}-${fixDay}`;
-                  const eventDiv = document.createElement('div');
-                  eventDiv.classList.add('event');
-                  eventDiv.innerText = `${events[k].firstName} ${events[k].lastName}`;
-                  days[j].appendChild(eventDiv);
-                  eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].firstName}`, `${events[k].lastName}`));
-                  if (parseInt(fixDay) == endD){
-                    endDate = true;
-                  }
-                  j++;
+                  if (i - paddingDays < 10){
+                      fixDay = `0${j - paddingDays + 1}`;
+                    } else {
+                      fixDay = `${j - paddingDays + 1}`;
+                    }
+                    const tempDayStr = `${year}-${fixMonth}-${fixDay}`;
+                    const eventDiv = document.createElement('div');
+                    eventDiv.classList.add('event');
+                    eventDiv.className = hclass;
+                    eventDiv.innerText = `${events[k].jobAddress}`;
+                    days[j].appendChild(eventDiv);
+                    eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].custName}`, `${events[k].jobAddress}`));
+                    if (parseInt(fixDay) == endD){
+                      endDate = true;
+                    }
+                j++;
               }
         }
         
   			if (dayString == events[k].startDate){
   				let j = i - 1;
   				let endDate = false;
+          let hclass = "event";
+          switch (events[k].jobType){
+            case "dirtbiz":
+              hclass = "dirtbiz";
+              break;
+            case "haulbiz":
+              hclass = "haulbiz";
+              break;
+            case "sealbiz":
+              hclass = "sealbiz";
+              break;
+            case "snowbiz":
+              hclass = "snowbiz";
+              break;
+            case "waterbiz":
+              hclass = "waterbiz";
+              break;
+          }
+          
   				while(!endDate){
-
-					if (i - paddingDays < 10){
-			    		fixDay = `0${j - paddingDays + 1}`;
-			    	} else {
-			    		fixDay = `${j - paddingDays + 1}`;
-			    	}
-			    	const tempDayStr = `${year}-${fixMonth}-${fixDay}`;
-					  const eventDiv = document.createElement('div');
-            eventDiv.classList.add('event');
-            eventDiv.innerText = `${events[k].firstName} ${events[k].lastName}`;
-            days[j].appendChild(eventDiv);
-            eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].firstName}`, `${events[k].lastName}`));
-            if (parseInt(startD) == parseInt(endD) || parseInt(fixDay) == endD){
+            if (i - paddingDays < 10){
+                fixDay = `0${j - paddingDays + 1}`;
+              } else {
+                fixDay = `${j - paddingDays + 1}`;
+              }
+              const tempDayStr = `${year}-${fixMonth}-${fixDay}`;
+              const eventDiv = document.createElement('div');
+              eventDiv.className = hclass
+              eventDiv.innerText = `${events[k].jobAddress}`;
+              days[j].appendChild(eventDiv);
+              eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].custName}`, `${events[k].jobAddress}`));
+              if (parseInt(startD) == parseInt(endD) || parseInt(fixDay) == endD){
                 if (parseInt(startMonth) == parseInt(endMonth)){
                   endDate = true;
                 }
@@ -274,21 +308,25 @@ function load() {
 }
 
 
-function openModal(startDate, endDate, firstName, lastName){
+function openModal(startDate, endDate, custName, jobAddress){
 
-  	const eventForDay = events.find(e => e.firstName === firstName && e.lastName === lastName && e.endDate === endDate && e.startDate === startDate);
-    console.log(eventForDay.ID);
+  	const eventForDay = events.find(e => e.custName === custName && e.jobAddress === jobAddress && e.endDate === endDate && e.startDate === startDate);
     document.getElementById('deleteButton').addEventListener('click', () => deleteEntry(eventForDay.ID));
     document.getElementById('updateButton').addEventListener('click', () => updateEntry(eventForDay.ID));
     console.log(eventForDay.ID)
   	if (eventForDay) {
-      document.getElementById('fn').value = eventForDay.firstName;
-      document.getElementById('ln').value = eventForDay.lastName;
-      document.getElementById('email').value = eventForDay.inputEmail;
+      document.getElementById('cn').value = eventForDay.custName;
+      document.getElementById('ja').value = eventForDay.jobAddress;
+      document.getElementById('con').value = eventForDay.contName;
+      document.getElementById('cp').value = eventForDay.contPhone;
+      document.getElementById('cemail').value = eventForDay.contEmail;
+      document.getElementById('en').value = eventForDay.empName;
+      document.getElementById('uemail').value = eventForDay.userEmail;
       document.getElementById('sd').value = eventForDay.startDate;
       document.getElementById('ed').value = eventForDay.endDate;
-      document.getElementById('re').value = eventForDay.reason;
-    	deleteEventModal.style.display = 'block';
+      document.getElementById('jt').value = eventForDay.jobType;
+      document.getElementById('desc').value = eventForDay.description;
+    	editEventModal.style.display = 'block';
 
   	  backDrop.style.display = 'block';
 	}
@@ -296,7 +334,7 @@ function openModal(startDate, endDate, firstName, lastName){
 }
 
 function closeModal() {
-  deleteEventModal.style.display = 'none';
+  editEventModal.style.display = 'none';
   backDrop.style.display = 'none';
   let clicked = null;
   load();
@@ -305,13 +343,14 @@ function closeModal() {
 async function updateEntry(dbId){
   const startDate = document.getElementById('sd').value;
   const endDate = document.getElementById('ed').value;
-  const reason = document.getElementById('re').value;
+  const jobType = document.getElementById('jt').value;
+  const description = document.getElementById('desc').value;
   
   if (dbId == document.getElementById('dbId').value){
     let confirmation = confirm('Are you sure you want to update this entry?');
     if (confirmation){
       // creates an object with field information to update
-      const data = {dbId, startDate, endDate, reason};
+      const data = {dbId, startDate, endDate, jobType, description};
       // creates post options for the api request
       const postOptions = {
         method: 'POST',
@@ -321,7 +360,7 @@ async function updateEntry(dbId){
         body: JSON.stringify(data)
       }
       // requests to post form data to the web server and reads the result as json
-      const postRes = await fetch('/api/update_time_off_request', postOptions);
+      const postRes = await fetch('/api/update_job-scheduling', postOptions);
       const postResult = await postRes.json();
     }
     location.reload();
@@ -345,17 +384,11 @@ async function deleteEntry(dbId){
         body: JSON.stringify(data)
       }
       // requests to post form data to the web server and reads the result as json
-      const postRes = await fetch('/api/delete_time_off_request', postOptions);
+      const postRes = await fetch('/api/delete', postOptions);
       const postResult = await postRes.json();
     }
     location.reload();
   } else {
     alert('Incorrect Entry ID')
   }
-}
-
-function fixName(name){
-  name = name.toLowerCase();
-  const fixed = name.charAt(0).toUpperCase() + name.slice(1);
-  return fixed;
 }
