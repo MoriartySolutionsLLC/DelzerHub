@@ -83,7 +83,7 @@ async function handle_submission(){
 			body: JSON.stringify(data)
 		}
 		// requests to post form data to the web server and reads the result as json
-		const postRes = await fetch('/api', postOptions);
+		const postRes = await fetch('/api/add_time_off_request', postOptions);
 		const postResult = await postRes.json();
 
 	} else { // if the name entered doesn't match a name from the employee list it alerts the user
@@ -321,7 +321,7 @@ async function updateEntry(dbId){
         body: JSON.stringify(data)
       }
       // requests to post form data to the web server and reads the result as json
-      const postRes = await fetch('/api/update', postOptions);
+      const postRes = await fetch('/api/update_time_off_request', postOptions);
       const postResult = await postRes.json();
     }
     location.reload();
