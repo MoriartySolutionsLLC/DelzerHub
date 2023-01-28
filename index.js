@@ -117,6 +117,72 @@ function main(){
 		})
 	});
 
+	app.post('/api/add_job_scheduling', (req, res) => {
+		// the data from the request
+		const data = req.body; 
+		const timestamp = Date.now();
+		data.timestamp = timestamp;
+
+		// this creates the title of the event
+		let title = `${data.empName} requests this time off`;
+
+		// saves request to database
+		jobSchedulingDB.insert(data);
+		jobSchedulingDB.find({}, function (err, docs){
+			if (err) throw new Error(err);
+
+			for (let i = 0; i < Object.keys(docs).length; i++) {
+				if (i == Object.keys(docs).length - 1) {
+					let dbID = docs[i]._id;
+					// creates the content for the email to managers
+					let content1 = `${data.empName} has scheduled a job from ${data.startDate} to ${data.endDate}\nThe job is for ${data.custName} at ${data.jobAddress}.\nBrief Description:\n${data.description}\nThe entry ID is ${dbID}`;
+
+					// Runs the function to send an email to the managers
+					sendEmail('kian.moriarty@delzerbiz.com', content1);
+
+					// creates the content for the user response
+					let content2 = `Thank you ${data.empName}, the job has successfully been scheduled.\nThe entry ID is ${dbID}`;
+
+					// Runs the function to send an email to the user
+					sendEmail(data.userEmail, content2);
+				}
+			}
+		});
+
+		res.json({
+			status: 'success',
+			timestamp: timestamp,
+		});
+
+	});
+
+	app.post('/api/delete_job_scheduling', (req, res) => {
+    	const data = req.body;
+    	const timestamp = Date.now();
+    
+    	jobSchedulingDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
+      		console.log(`${data.dbId} was deleted`);
+    	});
+    
+    	res.json({
+      		status:'success',
+      		timestamp: timestamp
+    	});
+  	});
+  
+  	app.post('/api/update_job-scheduling', (req, res) => {
+	    const data = req.body;
+	    const timestamp = Date.now();
+    
+    	jobSchedulingDB.update({ _id: `${data.dbId}` }, { $set: { startDate: `${data.startDate}`, endDate: `${data.endDate}`, jobType: `${data.jobType}`, description: `${data.description}`}}, {}, function(err, numReplaced){
+      		console.log(`${data.dbId} was updated.`)
+    	})
+    
+    	res.json({
+      		status:'success',
+      		timestamp: timestamp
+    	});
+  	});
 }
 
 /*UNIVERSAL FUCNTIONS*/
@@ -166,7 +232,7 @@ function getToken(){
 }
 
 /*THESE FUNCTIONS ARE FOR THE TIME OFF CALENDAR*/
-
+// asynchronous function to grab time off requests from db
 async function getTimeOffData(_callback){
 
   const Datastore = require('nedb'); // database requirement
@@ -420,6 +486,7 @@ function createRequestBody(id, startDate, endDate, reason){
 }
 
 /*THESE FUNCTIONS ARE FOR THE JOB SCHEDULING CALENDAR*/
+// asynchronous function to grab job scheduling requests from db
 async function getJobSchedulingData(_callback){
 
   const Datastore = require('nedb'); // database requirement
