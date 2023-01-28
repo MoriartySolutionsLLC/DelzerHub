@@ -36,7 +36,7 @@ async function on_open(){
 		}
 	}
 	// requests employee information from the web server and reads the response as json
-	const getEmpDRes = await fetch('/api/employeeData', getOptions);
+	const getEmpDRes = await fetch('/api/userData', getOptions);
 	const getEmpDResult = await getEmpDRes.json();
 	// sets the employee list with the result
 	employeeList = getEmpDResult;

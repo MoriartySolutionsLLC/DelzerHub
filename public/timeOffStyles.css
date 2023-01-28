@@ -29,6 +29,7 @@ h2 {
 }
 
 button {
+  font-weight: 700;
   min-width: 75px;
   cursor: pointer;
   border: none;

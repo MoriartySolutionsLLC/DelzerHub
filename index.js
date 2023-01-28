@@ -1,4 +1,3 @@
-
 // Initialize employee list object
 let employeeList = {};
 // Initialize eventData list object
@@ -10,10 +9,13 @@ function main(){
 
 	const Datastore = require('nedb'); // database requirement
 	// creating database
+	const userDB = new Datastore('user.db');
+	userDB.loadDatabase();
 	const timeOffDB = new Datastore('timeOff.db');
 	timeOffDB.loadDatabase();
 	const jobSchedulingDB = new Datastore('jobScheduling.db');
 	jobSchedulingDB.loadDatabase();
+	const loggingDB = new Datastore('loggingData.db');
 
 	const express = require('express');
 	const app = express();
@@ -23,6 +25,24 @@ function main(){
 	app.listen(port, () => console.log(`app listening at ${port}`));
 	app.use(express.static('public'));
 	app.use(express.json({limit: '100mb'}));
+
+	/*UNIVERSAL API REQUESTS*/
+	app.get('/api/userData', (req, res) => {
+		const data = req.body;
+		const timestamp = Date.now();
+		data.timestamp = timestamp;
+
+		userDB.find({ userName: `${data.userName}`, password: `${data.password}`}, function (err, docs){
+			if (err) throw new Error(err);
+
+			res.end(JSON.stringify(docs));
+		});
+	});
+
+	app.post('/api/add_user'), (req, res) => {
+		const data = req.body;
+		userDB.insert(data);
+	}
 
 	/*THESE API REQUESTS ARE FOR TIME OFF CALENDAR*/
 	app.get('/api/employeeData', (req, res) => {
