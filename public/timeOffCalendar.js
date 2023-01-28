@@ -41,11 +41,10 @@ async function on_open(){
 	// sets the employee list with the result
 	employeeList = getEmpDResult;
 
-	const getEvDRes = await fetch('/api/eventData', getOptions);
+	const getEvDRes = await fetch('/api/eventData_time_off_calendar', getOptions);
 	const getEvDResult = await getEvDRes.json();
 	events = getEvDResult;
 	load();
-
 }
 
 // asynchronous function to validate the form submission and send the information to the webserver
