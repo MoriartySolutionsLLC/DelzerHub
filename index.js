@@ -32,7 +32,7 @@ function main(){
 	});
 
 	app.get('/api/eventData_time_off_calendar', (req, res) =>{
-		getEventData(data =>{
+		getTimeOffData(data =>{
 			res.end(JSON.stringify(data));
 		})
 	});
@@ -111,9 +111,15 @@ function main(){
   	});
 
 	/*THESE API REQUESTS ARE FOR JOB SCHEDULING WEB PAGE*/
+	app.get('/api/eventData_job_scheduling', (req, res) =>{
+		getJobSchedulingData(data =>{
+			res.end(JSON.stringify(data));
+		})
+	});
+
 }
 
-/*THESE FUNCTIONS ARE FOR TIME OFF CALENDAR*/
+/*UNIVERSAL FUCNTIONS*/
 // Function to send email
 function sendEmail(to, content){
 
@@ -159,7 +165,9 @@ function getToken(){
 	return fileContent;
 }
 
-async function getEventData(_callback){
+/*THESE FUNCTIONS ARE FOR THE TIME OFF CALENDAR*/
+
+async function getTimeOffData(_callback){
 
   const Datastore = require('nedb'); // database requirement
   // creating database
@@ -411,3 +419,39 @@ function createRequestBody(id, startDate, endDate, reason){
 	return body;
 }
 
+/*THESE FUNCTIONS ARE FOR THE JOB SCHEDULING CALENDAR*/
+async function getJobSchedulingData(_callback){
+
+  const Datastore = require('nedb'); // database requirement
+  // creating database
+  const database = new Datastore('jobScheduling.db');
+  database.loadDatabase();
+  
+	console.log("Sending Event Data---->");
+	const result = new Promise((resolve, reject) => {
+		database.find({}, function(err, docs){
+			if (err) throw new Error(err);
+			let eventList = [];
+			for (let i = 0; i < Object.keys(docs).length; i++){
+				let objectValue = {};
+				objectValue['ID'] = docs[i]._id;
+				objectValue['custName'] = docs[i].custName;
+				objectValue['jobAddress'] = docs[i].jobAddress;
+        		objectValue['contName'] = docs[i].contName;
+        		objectValue['contPhone'] = docs[i].contPhone;
+        		objectValue['contEmail'] = docs[i].contEmail;
+        		objectValue['empName'] = docs[i].empName;
+        		objectValue['userEmail'] = docs[i].userEmail;
+				objectValue['startDate'] = docs[i].startDate;
+				objectValue['endDate'] = docs[i].endDate;
+        		objectValue['jobType'] = docs[i].jobType;
+				objectValue['description'] = docs[i].description;
+				eventList.push(objectValue);
+			}
+			let events = eventList;
+			return resolve(events);
+		});
+	});
+	let data = await result;
+	_callback(data);
+}
