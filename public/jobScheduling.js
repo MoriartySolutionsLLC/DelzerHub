@@ -384,7 +384,7 @@ async function deleteEntry(dbId){
         body: JSON.stringify(data)
       }
       // requests to post form data to the web server and reads the result as json
-      const postRes = await fetch('/api/delete', postOptions);
+      const postRes = await fetch('/api/delete_job_scheduling', postOptions);
       const postResult = await postRes.json();
     }
     location.reload();
