@@ -16,8 +16,6 @@ let startDate;
 let endDate;
 let reason;
 let toEmail;
-// initializes employee list
-let employeeList = {};
 // for calendar
 let nav = 0;
 const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -35,11 +33,6 @@ async function on_open(){
 			'Content-Type': 'application/json'
 		}
 	}
-	// requests employee information from the web server and reads the response as json
-	const getEmpDRes = await fetch('/api/userData', getOptions);
-	const getEmpDResult = await getEmpDRes.json();
-	// sets the employee list with the result
-	employeeList = getEmpDResult;
 
 	const getEvDRes = await fetch('/api/eventData_time_off_calendar', getOptions);
 	const getEvDResult = await getEvDRes.json();
@@ -59,11 +52,11 @@ async function handle_submission(){
 	reason = document.getElementById("reason").value;
 
 	// if a required field is not filled out sends an alert
-	if (firstName == "" || lastName == "" || reason == "" || inputEmail == ""){
+	if (reason == "" || inputEmail == ""){
 
 		alert("Must fill out all required fields"); // alerts user to enter all information
 
-	} else if (employeeList.hasOwnProperty(`${firstName} ${lastName}`)) { // if the name entered matches a name from the employee list runs the api post request
+	} else { // if the name entered matches a name from the employee list runs the api post request
 
 		// alerts users that time off was requested
 		alert("Time off Requested");
@@ -72,7 +65,7 @@ async function handle_submission(){
 		location.reload();
 
 		// creates an object with the form fields
-		const data = {firstName, lastName, inputEmail, startDate, endDate, reason};
+		const data = {firstname, lastname, inputEmail, startDate, endDate, reason};
 		// creates post options for the api request
 		const postOptions = {
 			method: 'POST',

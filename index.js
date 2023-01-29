@@ -16,6 +16,7 @@ function main(){
 	const jobSchedulingDB = new Datastore('jobScheduling.db');
 	jobSchedulingDB.loadDatabase();
 	const loggingDB = new Datastore('loggingData.db');
+	loggingDB.loadDatabase();
 
 	const express = require('express');
 	const app = express();
@@ -26,31 +27,24 @@ function main(){
 	app.use(express.static('public'));
 	app.use(express.json({limit: '100mb'}));
 
-	/*UNIVERSAL API REQUESTS*/
-	app.get('/api/userData', (req, res) => {
-		const data = req.body;
+	/*LOGIN API REQUESTS*/
+	app.get('/api/update_users', (req, res) => {
+		updateUsers();
 		const timestamp = Date.now();
-		data.timestamp = timestamp;
-
-		userDB.find({ userName: `${data.userName}`, password: `${data.password}`}, function (err, docs){
-			if (err) throw new Error(err);
-
-			res.end(JSON.stringify(docs));
-		});
+		res.json({
+      		status:'success',
+    		timestamp: timestamp
+    	});
 	});
 
-	app.post('/api/add_user'), (req, res) => {
+	app.post('/api/validate_user', (req, res) => {
 		const data = req.body;
-		userDB.insert(data);
-	}
+		validateUser(data, data => {
+			res.end(data);
+		})
+	});
 
 	/*THESE API REQUESTS ARE FOR TIME OFF CALENDAR*/
-	app.get('/api/employeeData', (req, res) => {
-		employeeNames(data => {
-			res.end(JSON.stringify(data));
-		});
-	});
-
 	app.get('/api/eventData_time_off_calendar', (req, res) =>{
 		getTimeOffData(data =>{
 			res.end(JSON.stringify(data));
@@ -251,6 +245,32 @@ function getToken(){
 	return fileContent;
 }
 
+/**/
+async function validateUser(data, _callback){
+	const Datastore = require('nedb'); // database requirement
+	// creating database
+	const bcrypt = require('bcrypt');
+	const userDB = new Datastore('user.db');
+	userDB.loadDatabase();
+
+	let result = new Promise((resolve, reject) => {
+		userDB.findOne({ username: `${data.username}`}, function (err, doc){
+			if (err) throw new Error(err);
+			bcrypt.compare(data.password, doc.password, function(err, result) {
+				console.log(doc.password);
+				if (result) {
+					let user = {'tsheetsid': doc._id, 'firstname': doc.firstname, 'lastname': doc.lastname};
+					console.log(user)
+					return resolve(user);
+				}
+			});
+		});
+	});
+
+	let foundUser = await result;
+	_callback(JSON.stringify(foundUser));
+}
+
 /*THESE FUNCTIONS ARE FOR THE TIME OFF CALENDAR*/
 // asynchronous function to grab time off requests from db
 async function getTimeOffData(_callback){
@@ -286,125 +306,106 @@ async function getTimeOffData(_callback){
 }
 
 // asynchronous function to request employee info from tsheets
-async function employeeNames(_callback){
+async function updateUsers(){
+	const Datastore = require('nedb'); // database requirement
+	// creating database
+	const userDB = new Datastore('user.db');
+	userDB.loadDatabase();
+
+	const bcrypt = require("bcrypt");
 
 	// requires built in request module 
 	const request = require("request");
 	// gets token
 	const token = getToken();
-	// creates options for get api request page 1
-	const options1 = { 
-		method: 'GET',
-  		url: 'https://rest.tsheets.com/api/v1/users',
-  		headers: {
-   	  		'Authorization': token
-   		},	
-   		qs: {
-   			page: '1'
-   		}
-   	};
-   	// creates options for get api request page 2
-   	const options2 = {
-   		method: 'GET',
-   		url: 'https://rest.tsheets.com/api/v1/users',
-   		headers: {
-   			'Authorization': token
-   		},
-   		qs: {
-   			page: '2'
-   		}
-   	};
+	let moreData = true;
+	let i = 1;
+	while (moreData) {
+		// creates options for get api request page i
+		const options = { 
+			method: 'GET',
+	  		url: 'https://rest.tsheets.com/api/v1/users',
+	  		qs: {
+	  			page: i
+	  		},
+	  		headers: {
+	   	  		'Authorization': token
+	   		}
+	   	};
 
-   	// promises result from tsheets api
-   	const result1 = new Promise((resolve, reject) => {
+	   	// promises result from tsheets api
+	   	const result = new Promise((resolve, reject) => {
 
-   		// requests employee info from tsheets api
-		request(options1, function (err, response, body){
-			if (err) throw new Error(err); // throws error if request fails
+	   		// requests employee info from tsheets api
+			request(options, function (err, response, body){
+				if (err) throw new Error(err); // throws error if request fails
+				// returns the result
+				let result = JSON.parse(body)
+				return resolve(result);
 
-			let res = JSON.stringify(body); // creates string from json content return
- 
- 			// replaces unnecessary characters in the result
-			res = res.replaceAll("\\\"", ""); 
-			res = res.replaceAll(",\\n", "");
-			res = res.split(" ");
-
-			// returns the result
-			return resolve(res);
+			});
 
 		});
+		let data = await result;
+	   	let results = data.results;
+	   	let users = results.users;
+	   	let userKeys = Object.keys(users);
+	   	for (let k = 0; k < userKeys.length; k++){
+	   		let id = userKeys[k];
+	   		let fname = users[id].first_name;
+	   		let lname = users[id].last_name;
+	   		let email = users[id].email;
+	   		let password = fname + "54321#";
 
-	});
+	   		let user = {'_id':id, 'username':email, 'firstname':fname, 'lastname':lname, 'email':email, 'password': password};
 
-	// promises result from tsheets api
-   	const result2 = new Promise((resolve, reject) => {
+	   		const result = new Promise((resolve, reject) => {
+	   			userDB.findOne({ firstname: fname, lastname: lname}, function (err, doc){
+					if (err) throw new Error(err);
+					let res = doc;
+					return resolve(res);
+				});
+	   		});
 
-   		// requests employee info from tsheets api
-		request(options2, function (err, response, body){
-			if (err) throw new Error(err); // throws error if request fails
+	   		let userFound = await result;
+   			if (userFound == null){
+				let pword = new Promise((resolve, reject) => {
+					bcrypt.genSalt(10, (err, salt) => {
+			   			bcrypt.hash(password, salt, function(err, hash) {
+			   				let res = hash;
+			   				return resolve(hash);
+			   			});
+					});
+				});
 
-			let res = JSON.stringify(body); // creates string from json content return
- 
- 			// replaces unnecessary characters in the result
-			res = res.replaceAll("\\\"", ""); 
-			res = res.replaceAll(",\\n", "");
-			res = res.split(" ");
+				let hashPass = await pword;
+				user.password = hashPass;
+				
+				let insert = new Promise((resolve, reject) => {
+					userDB.insert(user);
+					return resolve(true);
+				});
+				let finished = await insert;
+	   		} else {
+	   			if (userFound.email != user.email) {
+	   				let update = new Promise((resolve, reject) => {
+	   					userDB.update({ _id: user._id }, { $set: { email: user.email }}, {}, function(err, numReplaced){
+	    				});
+	    				return resolve(true);
+	   				})
+	   				let finished = await update;
+	   			}
+	   		}
+	   	}
 
-			// returns the result
-			return resolve(res);
-
-		});
-
-	});
-
-   	// gets the result
-   	let data1 = await result1;
-   	let data2 = await result2;
-   	let data = data1.concat(data2);
-
-   	// runs pullEmployeeData function to grab firstnames, lastnames, and ids from the employee info
-   	const employees = await pullEmployeeData(data);
-   	// puts the employee data into the employeeList object
-   	employeeList = employees;
-
-   	// returns the employee data to be used in a callback function
-   	_callback(employees);
-}
-
-// function to pull employee's firstnames, lastnames, and ids from data received
-function pullEmployeeData(data){
-
-	// initializes id variable
-	let id;
-	// initializes employee map
-	let employees = new Map();
-	// initializes name variables
-	let first_name;
-	let last_name;
-	let name;
-
-	// for loop to pull the proper information from the data receieved
-	for (let i = 0; i < data.length; i++){
-		if (data[i] == "first_name:") {
-			id = data[i-4]; // id is 4 values back from the "first_name:" value
-
-			if (data[i+6] == "last_name:"){
-				name = `${data[i+1]} ${data[i+7]}`;
-			} else {
-				name = `${data[i+1]} ${data[i+6]}`;
-			}
-
-			employees.set(name, id); // sets the key as the first and last name of employee and the value as the id of the employees
+	   	//checks for more data
+	   	let more = JSON.stringify(data.more);
+		more = more.toLowerCase();
+		if (more == 'false'){
+			moreData = false;
 		}
+		i++;
 	}
-
-	// turns the map into an object
-	let results = Object.fromEntries(employees);
-
-	// returns the resulting object
-	return results;
-
-	
 }
 
 // function to send a time off request to tsheets
@@ -434,7 +435,6 @@ function sendTsheetsRequest(id, sDate, eDate, reason){
 	// sends the request to the tsheets api
 	request(options, function (err, response, body){
 		if (err) throw new Error(err); // throws error if request fails
-
 	});
 }
 
