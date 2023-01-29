@@ -3,6 +3,18 @@ strong {
   text-decoration: underline;
 }
 
+.header {
+  width: 100%;
+  background-color: #444444;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+h1 {
+  font-size: 50px;
+  color: white;
+}
+
 h2 {
   font-size: 30px;
 }

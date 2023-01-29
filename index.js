@@ -7,7 +7,7 @@ main();
 
 function main(){
 	const bcrypt = require("bcrypt");
-	
+
 	const Datastore = require('nedb'); // database requirement
 	// creating database
 	const userDB = new Datastore('user.db');
@@ -173,30 +173,28 @@ function main(){
 		data.timestamp = timestamp;
 
 		// this creates the title of the event
-		let title = `${data.empName} requests this time off`;
+		let title = `${data.custName} ${data.jobAddress} ${data.jobType} (${data.startDate} - ${data.endDate})`;
 
 		// saves request to database
 		jobSchedulingDB.insert(data);
-		jobSchedulingDB.find({}, function (err, docs){
+		
+		// creates the content for the email to managers
+		let content1 = `${data.empName} has scheduled a job from ${data.startDate} to ${data.endDate}\nThe job is for ${data.custName} at ${data.jobAddress}.\nBrief Description:\n${data.description}`;
+
+		// Runs the function to send an email to the managers
+		sendEmail('kian.moriarty@delzerbiz.com', content1);
+
+		// creates the content for the user response
+		let content2 = `Thank you ${data.empName}, the job at ${data.jobAddress} for ${data.custName} has successfully been scheduled.`;
+
+		userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc){
 			if (err) throw new Error(err);
-
-			for (let i = 0; i < Object.keys(docs).length; i++) {
-				if (i == Object.keys(docs).length - 1) {
-					let dbID = docs[i]._id;
-					// creates the content for the email to managers
-					let content1 = `${data.empName} has scheduled a job from ${data.startDate} to ${data.endDate}\nThe job is for ${data.custName} at ${data.jobAddress}.\nBrief Description:\n${data.description}\nThe entry ID is ${dbID}`;
-
-					// Runs the function to send an email to the managers
-					sendEmail('kian.moriarty@delzerbiz.com', content1);
-
-					// creates the content for the user response
-					let content2 = `Thank you ${data.empName}, the job has successfully been scheduled.\nThe entry ID is ${dbID}`;
-
-					// Runs the function to send an email to the user
-					sendEmail(data.userEmail, content2);
-				}
+			if (doc != null || doc != undefined){
+				// Runs the function to send an email to the user
+				sendEmail(doc.email, content2);
 			}
-		});
+		})
+			
 
 		res.json({
 			status: 'success',
@@ -206,7 +204,7 @@ function main(){
 	});
 
 	app.post('/api/delete_job_scheduling', (req, res) => {
-		jobSchedulingDB.loadDatabase();
+			jobSchedulingDB.loadDatabase();
     	const data = req.body;
     	const timestamp = Date.now();
     
@@ -221,7 +219,7 @@ function main(){
     	});
   	});
   
-  	app.post('/api/update_job-scheduling', (req, res) => {
+  app.post('/api/update_job-scheduling', (req, res) => {
   		jobSchedulingDB.loadDatabase();
 	    const data = req.body;
 	    const timestamp = Date.now();
@@ -588,7 +586,6 @@ async function getJobSchedulingData(_callback){
   const database = new Datastore('jobScheduling.db');
   database.loadDatabase();
   
-	console.log("Sending Event Data---->");
 	const result = new Promise((resolve, reject) => {
 		database.find({}, function(err, docs){
 			if (err) throw new Error(err);
@@ -598,14 +595,14 @@ async function getJobSchedulingData(_callback){
 				objectValue['ID'] = docs[i]._id;
 				objectValue['custName'] = docs[i].custName;
 				objectValue['jobAddress'] = docs[i].jobAddress;
-        		objectValue['contName'] = docs[i].contName;
-        		objectValue['contPhone'] = docs[i].contPhone;
-        		objectValue['contEmail'] = docs[i].contEmail;
-        		objectValue['empName'] = docs[i].empName;
-        		objectValue['userEmail'] = docs[i].userEmail;
+    		objectValue['contName'] = docs[i].contName;
+    		objectValue['contPhone'] = docs[i].contPhone;
+    		objectValue['contEmail'] = docs[i].contEmail;
+    		objectValue['tsheetsid'] = docs[i].tsheetsid;
+    		objectValue['empName'] = docs[i].empName;
 				objectValue['startDate'] = docs[i].startDate;
 				objectValue['endDate'] = docs[i].endDate;
-        		objectValue['jobType'] = docs[i].jobType;
+    		objectValue['jobType'] = docs[i].jobType;
 				objectValue['description'] = docs[i].description;
 				eventList.push(objectValue);
 			}

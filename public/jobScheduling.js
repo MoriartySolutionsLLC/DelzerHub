@@ -60,6 +60,11 @@ async function on_open(){
 
 // asynchronous function to validate the form submission and send the information to the webserver
 async function handle_submission(){
+  let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  if (user == null || user == undefined){
+    alert('Please login before submitting a request');
+    window.open('login.html', '_self');
+  }
 
 	// gets the form entries and assigns them to the appropriate variables
 	custName = document.getElementById("customer name").value;
@@ -67,25 +72,22 @@ async function handle_submission(){
   contName = document.getElementById("contact name").value;
   contPhone = document.getElementById("contact phone").value;
   contEmail = document.getElementById("contact email").value;
-  empName = document.getElementById("emp name").value;
-	userEmail = document.getElementById("user email").value;
+  tsheetsid = user.tsheetsid;
+  empName = `${user.firstname} ${user.lastname}`;
 	startDate = document.getElementById("start date").value;
 	endDate = document.getElementById("end date").value;
   jobType = document.getElementById("job type").value;
 	description = document.getElementById("description").value;
 
 	// if a required field is not filled out sends an alert
-	if (custName == "" || jobAddress == "" || contName == "" || contPhone == "" || contEmail == "" || empName == "" || userEmail == "" || jobType == "" || description == "") {
+	if (custName == "" || jobAddress == "" || contName == "" || contPhone == "" || contEmail == "" || jobType == "" || description == "") {
 		alert("Must fill out all required fields"); // alerts user to enter all information
   } else {
-		// alerts users that time off was requested
-		alert("Job has been successfully scheduled.");
-
 		// reloads the page
 		location.reload();
 
 		// creates an object with the form fields
-		const data = {custName, jobAddress, contName, contPhone, contEmail, empName, userEmail, startDate, endDate, jobType, description};
+		const data = {custName, jobAddress, contName, contPhone, contEmail, tsheetsid, empName, startDate, endDate, jobType, description};
 		// creates post options for the api request
 		const postOptions = {
 			method: 'POST',
@@ -97,6 +99,9 @@ async function handle_submission(){
 		// requests to post form data to the web server and reads the result as json
 		const postRes = await fetch('/api/add_job_scheduling', postOptions);
 		const postResult = await postRes.json();
+
+    // alerts users that time off was requested
+    alert("Job has been successfully scheduled.");
   }
 }
 
@@ -320,8 +325,8 @@ function load() {
 function openModal(startDate, endDate, custName, jobAddress){
 
   	const eventForDay = events.find(e => e.custName === custName && e.jobAddress === jobAddress && e.endDate === endDate && e.startDate === startDate);
-    document.getElementById('deleteButton').addEventListener('click', () => deleteEntry(eventForDay.ID));
-    document.getElementById('updateButton').addEventListener('click', () => updateEntry(eventForDay.ID));
+    document.getElementById('deleteButton').addEventListener('click', () => deleteEntry(eventForDay.tsheetsid, eventForDay.ID));
+    document.getElementById('updateButton').addEventListener('click', () => updateEntry(eventForDay.tsheetsid, eventForDay.ID));
     console.log(eventForDay.ID)
   	if (eventForDay) {
       document.getElementById('cn').value = eventForDay.custName;
@@ -330,7 +335,6 @@ function openModal(startDate, endDate, custName, jobAddress){
       document.getElementById('cp').value = eventForDay.contPhone;
       document.getElementById('cemail').value = eventForDay.contEmail;
       document.getElementById('en').value = eventForDay.empName;
-      document.getElementById('uemail').value = eventForDay.userEmail;
       document.getElementById('sd').value = eventForDay.startDate;
       document.getElementById('ed').value = eventForDay.endDate;
       document.getElementById('jt').value = eventForDay.jobType;
@@ -349,13 +353,14 @@ function closeModal() {
   load();
 }
 
-async function updateEntry(dbId){
+async function updateEntry(tsheetsid, dbId){
+  let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
   const startDate = document.getElementById('sd').value;
   const endDate = document.getElementById('ed').value;
   const jobType = document.getElementById('jt').value;
   const description = document.getElementById('desc').value;
   
-  if (dbId == document.getElementById('dbId').value){
+  if (user.tsheetsid == tsheetsid){
     let confirmation = confirm('Are you sure you want to update this entry?');
     if (confirmation){
       // creates an object with field information to update
@@ -374,12 +379,13 @@ async function updateEntry(dbId){
     }
     location.reload();
   } else {
-    alert('Incorrect Entry ID')
+    alert('ERROR: User does not have access to update this Job.')
   }
 }
 
-async function deleteEntry(dbId){
-  if (dbId == document.getElementById('dbId').value){
+async function deleteEntry(tsheetsid, dbId){
+  let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  if (user.tsheetsid == tsheetsid){
     let confirmation = confirm('Are you sure you want to delete this entry?');
     if (confirmation){
       // creates an object with the id to delete 
@@ -398,6 +404,6 @@ async function deleteEntry(dbId){
     }
     location.reload();
   } else {
-    alert('Incorrect Entry ID')
+    alert('ERROR: User does not have access to delete this Job.')
   }
 }
