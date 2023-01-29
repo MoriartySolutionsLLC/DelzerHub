@@ -33,6 +33,15 @@ let events = {};
 
 // asynchronous function to get employee information on the open of the webpage
 async function on_open(){
+    let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+    if (user != null){
+      document.getElementById('loginBtn').textContent = "Logout";
+      let userSettings = document.createElement('a');
+      userSettings.setAttribute('href', 'userEdit.html');
+      userSettings.innerHTML = `${user.firstname} ${user.lastname}`;
+      userSettings.setAttribute('class', 'userEdit');
+      document.getElementById('loginArea').appendChild(userSettings);
+    }
 	// creates the options for the get api request
 	const getOptions = {
 		method: 'GET',

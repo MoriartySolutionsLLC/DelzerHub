@@ -15,8 +15,6 @@ function main(){
 	timeOffDB.loadDatabase();
 	const jobSchedulingDB = new Datastore('jobScheduling.db');
 	jobSchedulingDB.loadDatabase();
-	const loggingDB = new Datastore('loggingData.db');
-	loggingDB.loadDatabase();
 
 	const express = require('express');
 	const app = express();
@@ -57,37 +55,27 @@ function main(){
 		const timestamp = Date.now();
 		data.timestamp = timestamp;
 
-		// this gets the tsheets employee id associated with the entry
-		let id = employeeList[`${data.firstName} ${data.lastName}`];
+		// Runs the tsheets request function to send request to tsheets
+		sendTsheetsRequest(data);
+
 		// this creates the title of the event
-		let title = `${data.firstName} ${data.lastName} requests this time off`;
+		let title = `${data.firstname} ${data.lastname} requests this time off`;
 
-		// saves request to database
-		timeOffDB.insert(data);
-		timeOffDB.find({}, function (err, docs){
+		// creates the content for the email to managers
+		let content1 = `${data.firstname} ${data.lastname} has submitted a request to take time off from ${data.startDate} to ${data.endDate}\nHis reason is: ${data.reason}\n`;
+
+		// Runs the function to send an email to the managers
+		//sendEmail('kian.moriarty@delzerbiz.com, john@delzerbiz.com, jim@delzerbiz.com', content1);
+
+		// creates the content for the user response
+		let content2 = `Thank you ${data.firstname} ${data.lastname}, your request has successfully been submitted.\n\n${data.startDate} to ${data.endDate}\nReason:\n${data.reason}`;
+
+		userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc) {
 			if (err) throw new Error(err);
-
-			for (let i = 0; i < Object.keys(docs).length; i++) {
-				if (i == Object.keys(docs).length - 1) {
-					let dbID = docs[i]._id;
-					
-					// creates the content for the email to managers
-					let content1 = `${data.firstName} ${data.lastName} has submitted a request to take time off from ${data.startDate} to ${data.endDate}\nHis reason is: ${data.reason}\nThe entry ID is ${dbID}`;
-
-					// Runs the function to send an email to the managers
-					sendEmail('kian.moriarty@delzerbiz.com, john@delzerbiz.com, jim@delzerbiz.com', content1);
-
-					// creates the content for the user response
-					let content2 = `Thank you ${data.firstName} ${data.lastName}, your request has successfully been submitted.\nYour entry ID is ${dbID}`;
-
-					// Runs the function to send an email to the user
-					sendEmail(data.inputEmail, content2);
-				}
-			}
+			// Runs the function to send an email to the user
+			sendEmail(doc.email, content2);
 		});
 
-		// Runs the tsheets request function to send request to tsheets
-		sendTsheetsRequest(id, data.startDate, data.endDate, data.reason);
 
 		res.json({
 			status: 'success',
@@ -97,10 +85,12 @@ function main(){
 	});
   
   	app.post('/api/delete_time_off_request', (req, res) => {
+  		timeOffDB.loadDatabase();
     	const data = req.body;
     	const timestamp = Date.now();
     
     	timeOffDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
+    		if (err) throw new Error(err);
       		console.log(`${data.dbId} was deleted`);
     	});
     
@@ -111,6 +101,7 @@ function main(){
   	});
   
 	app.post('/api/update_time_off_request', (req, res) => {
+		timeOffDB.loadDatabase();
 	    const data = req.body;
 	    const timestamp = Date.now();
 	    
@@ -171,10 +162,12 @@ function main(){
 	});
 
 	app.post('/api/delete_job_scheduling', (req, res) => {
+		jobSchedulingDB.loadDatabase();
     	const data = req.body;
     	const timestamp = Date.now();
     
     	jobSchedulingDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
+    		if (err) throw new Error(err);
       		console.log(`${data.dbId} was deleted`);
     	});
     
@@ -185,6 +178,7 @@ function main(){
   	});
   
   	app.post('/api/update_job-scheduling', (req, res) => {
+  		jobSchedulingDB.loadDatabase();
 	    const data = req.body;
 	    const timestamp = Date.now();
     
@@ -245,7 +239,7 @@ function getToken(){
 	return fileContent;
 }
 
-/**/
+/*THESE FUNCTIONS ARE FOR THE LOGIN PAGE*/
 async function validateUser(data, _callback){
 	const Datastore = require('nedb'); // database requirement
 	// creating database
@@ -258,15 +252,18 @@ async function validateUser(data, _callback){
 			if (err) throw new Error(err);
 			bcrypt.compare(data.password, doc.password, function(err, result) {
 				console.log(doc.password);
-				if (result) {
-					let user = {'tsheetsid': doc._id, 'firstname': doc.firstname, 'lastname': doc.lastname};
-					console.log(user)
+				if (result) {				
+					const loggingDB = new Datastore('loggingData.db');
+					loggingDB.loadDatabase();
+					const timestamp = Date.now();
+					let user = {'tsheetsid': doc._id, 'username':doc.username, 'firstname': doc.firstname, 'lastname': doc.lastname};
+					let loggInfo = {'username': doc.username, 'timestamp': timestamp};
+					loggingDB.insert(loggInfo);
 					return resolve(user);
 				}
 			});
 		});
 	});
-
 	let foundUser = await result;
 	_callback(JSON.stringify(foundUser));
 }
@@ -288,9 +285,9 @@ async function getTimeOffData(_callback){
 			for (let i = 0; i < Object.keys(docs).length; i++){
 				let objectValue = {};
 				objectValue['ID'] = docs[i]._id;
-				objectValue['firstName'] = docs[i].firstName;
-				objectValue['lastName'] = docs[i].lastName;
-        		objectValue['inputEmail'] = docs[i].inputEmail;
+				objectValue['firstname'] = docs[i].firstname;
+				objectValue['lastname'] = docs[i].lastname;
+        		objectValue['tsheetsid'] = docs[i].tsheetsid;
 				objectValue['startDate'] = docs[i].startDate;
 				objectValue['endDate'] = docs[i].endDate;
 				objectValue['reason'] = docs[i].reason;
@@ -409,18 +406,22 @@ async function updateUsers(){
 }
 
 // function to send a time off request to tsheets
-function sendTsheetsRequest(id, sDate, eDate, reason){
+async function sendTsheetsRequest(data){
+	const Datastore = require('nedb'); // database requirement
+	// creating database
+	const timeOffDB = new Datastore('timeOff.db');
+	timeOffDB.loadDatabase();
 
 	// initializes the start and end dates with the built in date class 
-	const startDate = new Date(sDate);
-	const endDate = new Date(eDate);
+	const startDate = new Date(data.startDate + "T00:00:00");
+	const endDate = new Date(data.endDate + "T00:00:00");
 
 	// requires the built in request module
 	const request = require('request');
 	// gets the token
 	const token = getToken();
 	// runs the createRequest body function to create the body of the api request
-	const requestBody = createRequestBody(id, startDate, endDate, reason);
+	const requestBody = createRequestBody(data.tsheetsid, startDate, endDate, data.reason);
 	// creates the options for the tsheets api post request
 	const options = {
 		method: 'POST',
@@ -433,9 +434,35 @@ function sendTsheetsRequest(id, sDate, eDate, reason){
 	};
 
 	// sends the request to the tsheets api
-	request(options, function (err, response, body){
-		if (err) throw new Error(err); // throws error if request fails
+	let result = new Promise((resolve, reject) => {
+		request(options, function (err, response, body){
+			if (err) throw new Error(err); // throws error if request fails
+			let bod = JSON.parse(body);
+			console.log(bod);
+			let res = bod.supplemental_data.time_off_request_entries
+			if (res != null && res != undefined) {
+				let ids = Object.keys(res);
+				let id = "";
+
+				for (let i = 0; i < ids.length; i++){
+					if (i == ids.length - 1) {
+						id += ids[i];
+					} else {
+						id += ids[i] + ",";
+					};
+					console.log(ids[i]);
+				}
+				return resolve(id);
+			}
+		});
 	});
+	let tsEntryId = await result;
+	console.log(tsEntryId);
+
+	let dbEntry = {'_id':tsEntryId, 'firstname':data.firstname, 'lastname':data.lastname, 'tsheetsid':data.tsheetsid, 'startDate':data.startDate, 'endDate':data.endDate, 'reason':data.reason }
+
+	//saves request to database
+	timeOffDB.insert(dbEntry);
 }
 
 // function to create the request body for the time off request

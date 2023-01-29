@@ -10,6 +10,9 @@
 	<body onload="todays_date(); on_open(); load(); initButtons()">
 
 	<header>
+				<div id="loginArea">
+						<a href="login.html" class="loginBtn" id="loginBtn">Login</a>
+				</div>
       	<a href="index.html"><img src="ddi_logo.png" class="ddi_logo"></a>
 	</header>
 
@@ -77,22 +80,15 @@
       			<h2>Edit Time Off</h2>
 
             <form id="edit_event_form">
-              <label for="dbId">Entry ID</label>
-              <input type="text" id="dbId" placeholder="Entry ID from email">
-              <br><br>
-              
-              <label for="fn">First Name</label>
-              <input type="text" id="fn" disabled>
-              <br><br>
-              
-              <label for="ln">Last Name</label>
-              <input type="text" id="ln" disabled>
-              <br><br>
-              
-              <label for="email">Email Address</label>
-              <input type="text" id="email" disabled>
-              <br><br>
-              
+
+            	<label for="fn">First Name</label>
+            	<input type="text" id="fn">
+            	<br><br>
+
+            	<label for="ln">Last Name</label>
+            	<input type="text" id="ln">
+            	<br><br>
+
               <label for="sd">Start Date</label>
               <input type="date" id="sd">
               <br><br>
@@ -118,20 +114,9 @@
 
 			<section class="body">
 				<h2>Request Time Off</h2>
-				<p>To request time off, fill out the form below<br><strong>***Make sure to check the requests for other employees that have already been approved!***</strong></p>
+				<p>To request time off, fill out the form below<br><strong>***REMEMBER: This is a request. A supervisor must approve this before you can take off!***</strong></p>
 				<br>
 				<form id="time_off_form">
-					<label for="first name">First Name</label>
-					<input type="text" id="first name" placeholder="*required">
-					<br><br>
-
-					<label for="last name">Last Name</label>
-					<input type="text" id="last name" placeholder="*required">
-					<br><br>
-
-					<label for="user email"> Email Address</label>
-					<input type="email" id="user email" placeholder="username@email_address.com *required" size="35px">
-					<br><br>
 
 					<label for="start date">Start Date</label>
 					<input type="date" id="start date">

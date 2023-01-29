@@ -8,9 +8,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 
-	<body>
+	<body onload="on_open()">
 		<header>
-			<a href="index.html"><img src="ddi_logo.png" class="ddi_logo"></a>
+			<div id="loginArea">
+				<a href="login.html" class="loginBtn" id="loginBtn">Login</a>
+			</div>
+      		<a href="index.html"><img src="ddi_logo.png" class="ddi_logo"></a>
 		</header>
 
 		<main>
@@ -51,7 +54,7 @@
 
 			<p>This is the about page!</p>
 		</main>
-
+		<script type="text/javascript" src="about.js"></script>
 	</body>
 
 </html>

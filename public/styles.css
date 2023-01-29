@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: spotify-circular, Helvetica, Arial, sans-serif;
     background-color: #FFFEFD;
     margin: 0;
 }
@@ -10,7 +10,7 @@ body {
   height: 75px;
 }
 
-.loginBtn {
+.loginBtn, .userEdit {
     float: right;
     font-size: 12px;
     font-weight: bold;
@@ -21,7 +21,7 @@ body {
     text-decoration: none;
 }
 
-.loginBtn:hover {
+.loginBtn:hover, .userEdit:hover {
     background-color: #615C96;
 }
 
@@ -31,6 +31,7 @@ body {
 }
 
 .navbar a{
+  font-weight: 700;
   float: left;
   font-size: 16px;
   color: white;
@@ -45,6 +46,7 @@ body {
 }
 
 .dropdown .dropbtn {
+  font-weight: 700;
   font-size: 16px;
   border: none;
   border-radius: 0px;

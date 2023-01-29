@@ -1,4 +1,5 @@
 async function on_open() {
+	localStorage.removeItem("currentlyLoggedIn");
 	document.getElementById('loginBtn').addEventListener('click', () => handle_login());
 
 	// creates the options for the get api request
@@ -33,5 +34,6 @@ async function handle_login() {
 		const getResult = await getRes.json();
 		console.log(getResult);
 		localStorage.setItem("currentlyLoggedIn", JSON.stringify(getResult));
+		window.open('index.html', '_self');
 	}
 }

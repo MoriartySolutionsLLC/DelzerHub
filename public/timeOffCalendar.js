@@ -11,7 +11,7 @@ Read the ReadMe.md file for more information on the website and its uses for our
 // initializes form entry variables
 let firstName;
 let lastName;
-let inputEmail;
+let tsheetsid;
 let startDate;
 let endDate;
 let reason;
@@ -26,6 +26,15 @@ let events = {};
 
 // asynchronous function to get employee information on the open of the webpage
 async function on_open(){
+  let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  if (user != null){
+    document.getElementById('loginBtn').textContent = "Logout";
+    let userSettings = document.createElement('a');
+    userSettings.setAttribute('href', 'userEdit.html');
+    userSettings.innerHTML = `${user.firstname} ${user.lastname}`;
+    userSettings.setAttribute('class', 'userEdit');
+    document.getElementById('loginArea').appendChild(userSettings);
+  }
 	// creates the options for the get api request
 	const getOptions = {
 		method: 'GET',
@@ -37,35 +46,36 @@ async function on_open(){
 	const getEvDRes = await fetch('/api/eventData_time_off_calendar', getOptions);
 	const getEvDResult = await getEvDRes.json();
 	events = getEvDResult;
+  for (let i = 0; i < events.length; i++){
+    console.log(events[i])
+  }
 	load();
 }
 
 // asynchronous function to validate the form submission and send the information to the webserver
-async function handle_submission(){
+async function handle_submission(){	
 
-	// gets the form entries and assigns them to the appropriate variables
-	firstName = fixName(document.getElementById("first name").value);
-	lastName = fixName(document.getElementById("last name").value);
-	inputEmail = document.getElementById("user email").value;
+  let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  if (user == null) {
+    alert("Please login before submitting a request");
+    window.open('login.html', '_self');
+  } 
+
+  firstname = user.firstname;
+  lastname = user.lastname;
+  tsheetsid = user.tsheetsid;
+
+  // gets the form entries and assigns them to the appropriate variables
 	startDate = document.getElementById("start date").value;
 	endDate = document.getElementById("end date").value;
 	reason = document.getElementById("reason").value;
 
-	// if a required field is not filled out sends an alert
-	if (reason == "" || inputEmail == ""){
-
-		alert("Must fill out all required fields"); // alerts user to enter all information
-
-	} else { // if the name entered matches a name from the employee list runs the api post request
-
-		// alerts users that time off was requested
-		alert("Time off Requested");
-
-		// reloads the page
-		location.reload();
-
+	if (reason == ""){
+		alert("Must fill out a reason for leaving"); // alerts user to enter all information
+	} else { 
+		
 		// creates an object with the form fields
-		const data = {firstname, lastname, inputEmail, startDate, endDate, reason};
+		const data = {firstname, lastname, tsheetsid, startDate, endDate, reason};
 		// creates post options for the api request
 		const postOptions = {
 			method: 'POST',
@@ -77,12 +87,11 @@ async function handle_submission(){
 		// requests to post form data to the web server and reads the result as json
 		const postRes = await fetch('/api/add_time_off_request', postOptions);
 		const postResult = await postRes.json();
-
-	} else { // if the name entered doesn't match a name from the employee list it alerts the user
-
-		alert("Employee not found in database.\nCheck spelling or contact manager."); // alerts the user that the name was not found in the database
-
-	}
+  }
+  // alerts users that time off was requested
+    alert("Time off Requested");
+  // reloads the page
+  location.reload();
 }
 
 // function to get the current date and enter it into the forms date fields
@@ -174,8 +183,6 @@ function load() {
       		daySquare.classList.add('padding');
     	}
 
-
-
     calendar.appendChild(daySquare);    
 
   	}
@@ -225,9 +232,9 @@ function load() {
                   const tempDayStr = `${year}-${fixMonth}-${fixDay}`;
                   const eventDiv = document.createElement('div');
                   eventDiv.classList.add('event');
-                  eventDiv.innerText = `${events[k].firstName} ${events[k].lastName}`;
+                  eventDiv.innerText = `${events[k].firstname} ${events[k].lastname}`;
                   days[j].appendChild(eventDiv);
-                  eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].firstName}`, `${events[k].lastName}`));
+                  eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].tsheetsid}`));
                   if (parseInt(fixDay) == endD){
                     endDate = true;
                   }
@@ -248,9 +255,9 @@ function load() {
 			    	const tempDayStr = `${year}-${fixMonth}-${fixDay}`;
 					  const eventDiv = document.createElement('div');
             eventDiv.classList.add('event');
-            eventDiv.innerText = `${events[k].firstName} ${events[k].lastName}`;
+            eventDiv.innerText = `${events[k].firstname} ${events[k].lastname}`;
             days[j].appendChild(eventDiv);
-            eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].firstName}`, `${events[k].lastName}`));
+            eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].tsheetsid}`));
             if (parseInt(startD) == parseInt(endD) || parseInt(fixDay) == endD){
                 if (parseInt(startMonth) == parseInt(endMonth)){
                   endDate = true;
@@ -265,18 +272,14 @@ function load() {
   	}
 }
 
+function openModal(startDate, endDate, tsheetsid){
 
-function openModal(startDate, endDate, firstName, lastName){
-
-  	const eventForDay = events.find(e => e.firstName === firstName && e.lastName === lastName && e.endDate === endDate && e.startDate === startDate);
-    console.log(eventForDay.ID);
-    document.getElementById('deleteButton').addEventListener('click', () => deleteEntry(eventForDay.ID));
-    document.getElementById('updateButton').addEventListener('click', () => updateEntry(eventForDay.ID));
-    console.log(eventForDay.ID)
+  	const eventForDay = events.find(e => e.tsheetsid === tsheetsid && e.endDate === endDate && e.startDate === startDate);
+    document.getElementById('deleteButton').addEventListener('click', () => deleteEntry(eventForDay.tsheetsid, eventForDay.ID));
+    document.getElementById('updateButton').addEventListener('click', () => updateEntry(eventForDay.tsheetsid, eventForDay.ID));
   	if (eventForDay) {
-      document.getElementById('fn').value = eventForDay.firstName;
-      document.getElementById('ln').value = eventForDay.lastName;
-      document.getElementById('email').value = eventForDay.inputEmail;
+      document.getElementById('fn').value = eventForDay.firstname;
+      document.getElementById('ln').value = eventForDay.lastname;
       document.getElementById('sd').value = eventForDay.startDate;
       document.getElementById('ed').value = eventForDay.endDate;
       document.getElementById('re').value = eventForDay.reason;
@@ -284,7 +287,6 @@ function openModal(startDate, endDate, firstName, lastName){
 
   	  backDrop.style.display = 'block';
 	}
-
 }
 
 function closeModal() {
@@ -294,16 +296,17 @@ function closeModal() {
   load();
 }
 
-async function updateEntry(dbId){
+async function updateEntry(tsheetsid, dbId){
+  const user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
   const startDate = document.getElementById('sd').value;
   const endDate = document.getElementById('ed').value;
   const reason = document.getElementById('re').value;
   
-  if (dbId == document.getElementById('dbId').value){
+  if (tsheetsid == user.tsheetsid){
     let confirmation = confirm('Are you sure you want to update this entry?');
     if (confirmation){
       // creates an object with field information to update
-      const data = {dbId, startDate, endDate, reason};
+      const data = {dbId, tsheetsid, startDate, endDate, reason};
       // creates post options for the api request
       const postOptions = {
         method: 'POST',
@@ -318,16 +321,18 @@ async function updateEntry(dbId){
     }
     location.reload();
   } else {
-    alert('Incorrect Entry ID')
+    alert('ALERT: Current user not allowed to edit this request');
+    window.open('login.html', '_self');
   }
 }
 
-async function deleteEntry(dbId){
-  if (dbId == document.getElementById('dbId').value){
+async function deleteEntry(tsheetsid, dbId){
+  const user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  if (tsheetsid == user.tsheetsid){
     let confirmation = confirm('Are you sure you want to delete this entry?');
     if (confirmation){
       // creates an object with the id to delete 
-      const data = {dbId};
+      const data = {tsheetsid, dbId};
       // creates post options for the api request
       const postOptions = {
         method: 'POST',
@@ -344,10 +349,4 @@ async function deleteEntry(dbId){
   } else {
     alert('Incorrect Entry ID')
   }
-}
-
-function fixName(name){
-  name = name.toLowerCase();
-  const fixed = name.charAt(0).toUpperCase() + name.slice(1);
-  return fixed;
 }

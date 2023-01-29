@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="userEdit.css">
+		<meta charset="UTF-8">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body onload="on_open()">
+		<header align="center">
+			<a href="index.html"><img src="ddi_logo.png"></a>
+			<hr>
+		</header>
+
+		<main>
+			<div class="main">
+				<div class="editForm">
+					<form>
+						<div class="editBlock">	
+							<div class="label">
+								<label for="username">Username:</label>
+							</div>
+							<input type="text" id="username" class="input">
+						</div>
+						<div class="editBlock">
+							<div class="label">
+								<label for="password">Password:</label>
+							</div>
+							<input type="password" id="password" class="input" placeholder="Password">
+						</div>
+					</form>
+					<button id="updateUsernameBtn">Update Username</button>
+					<br><br><br>
+					<form>
+						<div class="editBlock">	
+							<div class="label">
+								<label for="oldPassword">Old Password:</label>
+							</div>
+							<input type="password" id="oldPassword" class="input" placeholder="Old Password">
+						</div>
+						<div class="editBlock">
+							<div class="label">
+								<label for="newPassword">New Password:</label>
+							</div>
+							<input type="password" id="newPassword" class="input" placeholder="New Password">
+						</div>
+						<div class="editBlock">
+							<div class="label">
+								<label for="coNewPassword">Confirm New Password:</label>
+							</div>
+							<input type="password" id="coNewPassword" class="input" placeholder="New Password">
+						</div>
+					</form>
+					<button id="updatePasswordBtn">Update Password</button>
+				</div>
+			</div>
+		</main>
+		<script type="text/javascript" src="userEdit.js"></script>
+	</body>
+</html>

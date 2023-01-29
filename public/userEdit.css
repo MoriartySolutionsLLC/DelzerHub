@@ -17,13 +17,13 @@ main {
 }
 
 
-.loginform {
+.editForm {
 	display: felx;
 	flex-direction: column;
 	row-gap: 10px;
 }
 
-.loginblock {
+.editBlock {
 	padding-bottom: 16px;
 }
 

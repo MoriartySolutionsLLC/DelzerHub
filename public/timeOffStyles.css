@@ -13,7 +13,8 @@ h2 {
 	margin-left: auto;
 }
 
-.submit {
+.submit {  
+  font-weight: 700;
   width: 75px;
   cursor: pointer;
 	color: white;
