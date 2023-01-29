@@ -6,7 +6,8 @@ let eventData = {};
 main();
 
 function main(){
-
+	const bcrypt = require("bcrypt");
+	
 	const Datastore = require('nedb'); // database requirement
 	// creating database
 	const userDB = new Datastore('user.db');
@@ -40,6 +41,49 @@ function main(){
 		validateUser(data, data => {
 			res.end(data);
 		})
+	});
+
+	/*EDIT USER API REQUESTS*/
+	app.post('/api/update_username', (req, res) => {
+		userDB.loadDatabase();
+		const data = req.body;
+
+		userDB.findOne({username: `${data.username}`}, function(err, doc) {
+			if (err) throw new Error(err);
+
+			if (doc == null || doc == undefined) {
+				userDB.update({_id: `${data.tsheetsid}`}, {$set: {username: `${data.username}`}}, {}, function(err, numReplaced){
+					if(err) throw new Error(err);
+					console.log(`${data.firstname} ${data.lastname} updated their username to ${data.username}.`)
+				});
+				res.json({
+			      status:'success'
+		    	});
+
+		    } else {
+		    	res.json({
+		    		status:'invalid'
+		    	})
+		    }
+		});
+	});
+
+	app.post('/api/update_password', (req, res) => {
+		userDB.loadDatabase();
+		const data = req.body;
+
+		bcrypt.genSalt(10, (err, salt) => {
+   			bcrypt.hash(data.password, salt, function(err, hash) {
+   				userDB.update({_id: `${data.tsheetsid}`}, {$set: {password: `${hash}`}}, {}, function(err, numReplaced){
+   					if (err) throw new Error(err);
+
+ 						res.json({
+				      status:'success'
+			    	});
+   				});			
+   			});
+		});
+
 	});
 
 	/*THESE API REQUESTS ARE FOR TIME OFF CALENDAR*/
@@ -250,18 +294,21 @@ async function validateUser(data, _callback){
 	let result = new Promise((resolve, reject) => {
 		userDB.findOne({ username: `${data.username}`}, function (err, doc){
 			if (err) throw new Error(err);
-			bcrypt.compare(data.password, doc.password, function(err, result) {
-				console.log(doc.password);
-				if (result) {				
-					const loggingDB = new Datastore('loggingData.db');
-					loggingDB.loadDatabase();
-					const timestamp = Date.now();
-					let user = {'tsheetsid': doc._id, 'username':doc.username, 'firstname': doc.firstname, 'lastname': doc.lastname};
-					let loggInfo = {'username': doc.username, 'timestamp': timestamp};
-					loggingDB.insert(loggInfo);
-					return resolve(user);
-				}
-			});
+			if (doc != null || doc != undefined) {
+				bcrypt.compare(data.password, doc.password, function(err, result) {
+					if (result) {				
+						const loggingDB = new Datastore('loggingData.db');
+						loggingDB.loadDatabase();
+						const timestamp = Date.now();
+						let user = {'tsheetsid': doc._id, 'username':doc.username, 'firstname': doc.firstname, 'lastname': doc.lastname};
+						let loggInfo = {'username': doc.username, 'timestamp': timestamp};
+						loggingDB.insert(loggInfo);
+						return resolve(user);
+					} else {
+						return resolve(null);
+					}
+				});
+			};
 		});
 	});
 	let foundUser = await result;
