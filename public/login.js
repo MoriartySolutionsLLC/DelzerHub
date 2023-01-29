@@ -34,5 +34,6 @@ async function handle_login() {
 		const getRes = await fetch('/api/validate_user', postOptions);
 		const getResult = await getRes.json();
 		console.log(getResult);
+		localStorage.setItem("currentlyLoggedIn", JSON.stringify(getResult));
 	}
 }
