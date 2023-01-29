@@ -1,5 +1,3 @@
-let user;
-
 async function on_open() {
 	document.getElementById('loginBtn').addEventListener('click', () => handle_login());
 
