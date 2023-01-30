@@ -102,14 +102,14 @@ function main(){
 		// Runs the tsheets request function to send request to tsheets
 		sendTsheetsRequest(data);
 
-		// this creates the title of the event
 		let title = `${data.firstname} ${data.lastname} requests this time off`;
+		let title2 = `Thank you for your time off request`;
 
 		// creates the content for the email to managers
 		let content1 = `${data.firstname} ${data.lastname} has submitted a request to take time off from ${data.startDate} to ${data.endDate}\nHis reason is: ${data.reason}\n`;
 
 		// Runs the function to send an email to the managers
-		//sendEmail('kian.moriarty@delzerbiz.com, john@delzerbiz.com, jim@delzerbiz.com', content1);
+		//sendEmail('kian.moriarty@delzerbiz.com, john@delzerbiz.com, jim@delzerbiz.com', title, content1);
 
 		// creates the content for the user response
 		let content2 = `Thank you ${data.firstname} ${data.lastname}, your request has successfully been submitted.\n\n${data.startDate} to ${data.endDate}\nReason:\n${data.reason}`;
@@ -117,7 +117,7 @@ function main(){
 		userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc) {
 			if (err) throw new Error(err);
 			// Runs the function to send an email to the user
-			sendEmail(doc.email, content2);
+			sendEmail(doc.email, title2, content2);
 		});
 
 
@@ -128,7 +128,7 @@ function main(){
 
 	});
   
-  	app.post('/api/delete_time_off_request', (req, res) => {
+  app.post('/api/delete_time_off_request', (req, res) => {
   		timeOffDB.loadDatabase();
     	const data = req.body;
     	const timestamp = Date.now();
@@ -146,18 +146,48 @@ function main(){
   
 	app.post('/api/update_time_off_request', (req, res) => {
 		timeOffDB.loadDatabase();
-	    const data = req.body;
-	    const timestamp = Date.now();
-	    
-	    timeOffDB.update({ _id: `${data.dbId}` }, { $set: { startDate: `${data.startDate}`, endDate: `${data.endDate}`, reason: `${data.reason}`}}, {}, function(err, numReplaced){
-	      console.log(`${data.dbId} was updated.`)
-	    })
+    const data = req.body;
+    const timestamp = Date.now();
     
-	    res.json({
-	      status:'success',
-	      timestamp: timestamp
-    	});
+    timeOffDB.update({ _id: `${data.dbId}` }, { $set: { startDate: `${data.startDate}`, endDate: `${data.endDate}`, reason: `${data.reason}`}}, {}, function(err, numReplaced){
+      console.log(`${data.dbId} was updated.`)
+    })
+  
+    res.json({
+      status:'success',
+      timestamp: timestamp
   	});
+	});
+
+	app.post('/api/approve_time_off_request', (req, res) => {
+		timeOffDB.loadDatabase();
+    const data = req.body;
+
+    timeOffDB.update({_id: `${data.dbId}`}, {$set: { approved: `${data.newApproved}`}}, {}, function(err, numReplaced){
+    	if (err) throw new Error(err);
+    	timeOffDB.findOne({_id: `${data.dbId}`}, function(errr, doc){
+    		if (errr) throw new Error(errr);
+    		userDB.findOne({_id: `${doc.tsheetsid}`}, function(error, user){
+    			if (error) throw new Error(error);
+
+    			let approved
+    			if (data.approved == 'true'){
+    				approved = 'approved';
+    			} else {
+    				approved = 'unapproved';
+    			}
+
+    			let title = `${data.firstname} ${data.lastname} has ${approved} your time off request.`;
+    			let content = `Your request to leave from ${doc.startDate} to ${doc.endDate} was ${approved}.`;
+    			sendEmail(user.email, title, content);
+    		})
+    	})
+		});
+
+		res.json({
+			status:'success'
+		});
+  });
 
 	/*THESE API REQUESTS ARE FOR JOB SCHEDULING WEB PAGE*/
 	app.get('/api/eventData_job_scheduling', (req, res) =>{
@@ -182,7 +212,7 @@ function main(){
 		let content1 = `${data.empName} has scheduled a job from ${data.startDate} to ${data.endDate}\nThe job is for ${data.custName} at ${data.jobAddress}.\nBrief Description:\n${data.description}`;
 
 		// Runs the function to send an email to the managers
-		sendEmail('kian.moriarty@delzerbiz.com', content1);
+		sendEmail('kian.moriarty@delzerbiz.com', title, content1);
 
 		// creates the content for the user response
 		let content2 = `Thank you ${data.empName}, the job at ${data.jobAddress} for ${data.custName} has successfully been scheduled.`;
@@ -191,7 +221,7 @@ function main(){
 			if (err) throw new Error(err);
 			if (doc != null || doc != undefined){
 				// Runs the function to send an email to the user
-				sendEmail(doc.email, content2);
+				sendEmail(doc.email, title ,content2);
 			}
 		})
 			
@@ -237,7 +267,7 @@ function main(){
 
 /*UNIVERSAL FUCNTIONS*/
 // Function to send email
-function sendEmail(to, content){
+function sendEmail(to, title, content){
 
 	// requires built nodemailer module
 	let nodemailer = require('nodemailer');
@@ -255,7 +285,7 @@ function sendEmail(to, content){
 	let mailOptions = {
 		from: 'DDI.TimeOff.Request@gmail.com', // from address
 		to: to, // main manager address
-		subject: 'DDI Time Off Request', // subject line
+		subject: title, // subject line
 		text: content // content of email
 	}
 
@@ -311,40 +341,6 @@ async function validateUser(data, _callback){
 	});
 	let foundUser = await result;
 	_callback(JSON.stringify(foundUser));
-}
-
-/*THESE FUNCTIONS ARE FOR THE TIME OFF CALENDAR*/
-// asynchronous function to grab time off requests from db
-async function getTimeOffData(_callback){
-
-  const Datastore = require('nedb'); // database requirement
-  // creating database
-  const database = new Datastore('timeOff.db');
-  database.loadDatabase();
-  
-	console.log("Sending Event Data---->");
-	const result = new Promise((resolve, reject) => {
-		database.find({}, function(err, docs){
-			if (err) throw new Error(err);
-			let eventList = [];
-			for (let i = 0; i < Object.keys(docs).length; i++){
-				let objectValue = {};
-				objectValue['ID'] = docs[i]._id;
-				objectValue['firstname'] = docs[i].firstname;
-				objectValue['lastname'] = docs[i].lastname;
-        		objectValue['tsheetsid'] = docs[i].tsheetsid;
-				objectValue['startDate'] = docs[i].startDate;
-				objectValue['endDate'] = docs[i].endDate;
-				objectValue['reason'] = docs[i].reason;
-				eventList.push(objectValue);
-			}
-			let events = eventList;
-			return resolve(events);
-		});
-	});
-
-	let data = await result;
-	_callback(data);
 }
 
 // asynchronous function to request employee info from tsheets
@@ -450,6 +446,42 @@ async function updateUsers(){
 	}
 }
 
+/*THESE FUNCTIONS ARE FOR THE TIME OFF CALENDAR*/
+// asynchronous function to grab time off requests from db
+async function getTimeOffData(_callback){
+
+  const Datastore = require('nedb'); // database requirement
+  // creating database
+  const database = new Datastore('timeOff.db');
+  database.loadDatabase();
+  
+	console.log("Sending Event Data---->");
+	const result = new Promise((resolve, reject) => {
+		database.find({}, function(err, docs){
+			if (err) throw new Error(err);
+			let eventList = [];
+			for (let i = 0; i < Object.keys(docs).length; i++){
+				let objectValue = {};
+				objectValue['ID'] = docs[i]._id;
+				objectValue['firstname'] = docs[i].firstname;
+				objectValue['lastname'] = docs[i].lastname;
+        objectValue['tsheetsid'] = docs[i].tsheetsid;
+				objectValue['startDate'] = docs[i].startDate;
+				objectValue['endDate'] = docs[i].endDate;
+				objectValue['reason'] = docs[i].reason;
+				objectValue['approved'] = docs[i].approved;
+				console.log(objectValue);
+				eventList.push(objectValue);
+			}
+			let events = eventList;
+			return resolve(events);
+		});
+	});
+
+	let data = await result;
+	_callback(data);
+}
+
 // function to send a time off request to tsheets
 async function sendTsheetsRequest(data){
 	const Datastore = require('nedb'); // database requirement
@@ -504,7 +536,7 @@ async function sendTsheetsRequest(data){
 	let tsEntryId = await result;
 	console.log(tsEntryId);
 
-	let dbEntry = {'_id':tsEntryId, 'firstname':data.firstname, 'lastname':data.lastname, 'tsheetsid':data.tsheetsid, 'startDate':data.startDate, 'endDate':data.endDate, 'reason':data.reason }
+	let dbEntry = {'_id':tsEntryId, 'firstname':data.firstname, 'lastname':data.lastname, 'tsheetsid':data.tsheetsid, 'startDate':data.startDate, 'endDate':data.endDate, 'reason':data.reason, 'approved': data.approved}
 
 	//saves request to database
 	timeOffDB.insert(dbEntry);

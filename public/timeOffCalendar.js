@@ -8,14 +8,6 @@ Lastly it sets the date boxes to todays date upon the opening of the web page
 Read the ReadMe.md file for more information on the website and its uses for our Company
 */
 
-// initializes form entry variables
-let firstName;
-let lastName;
-let tsheetsid;
-let startDate;
-let endDate;
-let reason;
-let toEmail;
 // for calendar
 let nav = 0;
 const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -61,21 +53,22 @@ async function handle_submission(){
     window.open('login.html', '_self');
   } 
 
-  firstname = user.firstname;
-  lastname = user.lastname;
-  tsheetsid = user.tsheetsid;
+  let firstname = user.firstname;
+  let lastname = user.lastname;
+  let tsheetsid = user.tsheetsid;
 
   // gets the form entries and assigns them to the appropriate variables
-	startDate = document.getElementById("start date").value;
-	endDate = document.getElementById("end date").value;
-	reason = document.getElementById("reason").value;
+	let startDate = document.getElementById("start date").value;
+	let endDate = document.getElementById("end date").value;
+	let reason = document.getElementById("reason").value;
+  let approved = "false";
 
 	if (reason == ""){
 		alert("Must fill out a reason for leaving"); // alerts user to enter all information
 	} else { 
 		
 		// creates an object with the form fields
-		const data = {firstname, lastname, tsheetsid, startDate, endDate, reason};
+		const data = {firstname, lastname, tsheetsid, startDate, endDate, reason, approved};
 		// creates post options for the api request
 		const postOptions = {
 			method: 'POST',
@@ -218,10 +211,21 @@ function load() {
         let endDay = new Date(events[k].endDate + "T00:00:00");
         let endMonth = endDay.getMonth() + 1;
         let endD = endDay.getDate();
+        let hclass = 'event';
         if (endMonth == dayMonth && startMonth < dayMonth && dayB == 1){
         
               let j = i - 1;
               let endDate = false;
+              let hclass = "";
+              switch (events[k].approved){
+                case "false":
+                  hclass = "unapproved";
+                  break;
+                case "true":
+                  hclass = "approved";
+                  break;
+              }
+
               while(!endDate){
 
                 if (i - paddingDays < 10){
@@ -232,6 +236,7 @@ function load() {
                   const tempDayStr = `${year}-${fixMonth}-${fixDay}`;
                   const eventDiv = document.createElement('div');
                   eventDiv.classList.add('event');
+                  eventDiv.className = hclass;
                   eventDiv.innerText = `${events[k].firstname} ${events[k].lastname}`;
                   days[j].appendChild(eventDiv);
                   eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].tsheetsid}`));
@@ -245,6 +250,14 @@ function load() {
   			if (dayString == events[k].startDate){
   				let j = i - 1;
   				let endDate = false;
+          switch (events[k].approved){
+            case "false":
+              hclass = "unapproved";
+              break;
+            case "true":
+              hclass = "approved";
+              break;
+          }
   				while(!endDate){
 
 					if (i - paddingDays < 10){
@@ -255,6 +268,7 @@ function load() {
 			    	const tempDayStr = `${year}-${fixMonth}-${fixDay}`;
 					  const eventDiv = document.createElement('div');
             eventDiv.classList.add('event');
+            eventDiv.className = hclass;
             eventDiv.innerText = `${events[k].firstname} ${events[k].lastname}`;
             days[j].appendChild(eventDiv);
             eventDiv.addEventListener('click', () => openModal(`${events[k].startDate}`, `${events[k].endDate}`, `${events[k].tsheetsid}`));
@@ -273,11 +287,22 @@ function load() {
 }
 
 function openModal(startDate, endDate, tsheetsid){
-
+    let user = JSON.parse(localStorage.getItem("currentlyLoggedIn")); 
   	const eventForDay = events.find(e => e.tsheetsid === tsheetsid && e.endDate === endDate && e.startDate === startDate);
     document.getElementById('deleteButton').addEventListener('click', () => deleteEntry(eventForDay.tsheetsid, eventForDay.ID));
     document.getElementById('updateButton').addEventListener('click', () => updateEntry(eventForDay.tsheetsid, eventForDay.ID));
   	if (eventForDay) {
+      let approvalBtn = document.getElementById('approvalBtn');
+      if (eventForDay.approved == 'true'){
+        approvalBtn.innerHTML = 'Approved';
+      }
+      if (user.firstname == "John" && user.lastname == "Delzer" || user.firstname == "Kian"  && user.lastname == "Moriarty"){
+        approvalBtn.addEventListener('click', () => approveEntry(eventForDay.approved, eventForDay.ID));
+      } else {
+        console.log('disabled')
+        approvalBtn.disabled = true;
+      }
+
       document.getElementById('fn').value = eventForDay.firstname;
       document.getElementById('ln').value = eventForDay.lastname;
       document.getElementById('sd').value = eventForDay.startDate;
@@ -349,4 +374,37 @@ async function deleteEntry(tsheetsid, dbId){
   } else {
     alert('Incorrect Entry ID')
   }
+}
+
+async function approveEntry(approved, dbId) {
+  const user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  let newApproved;
+  let confirmation;
+  if (approved == 'false') {
+    confirmation = confirm('Are you sure you want to approve this entry?');
+    newApproved = 'true';
+  } else {
+    confirmation = confirm('Are you sure you want to unapprove this entry?');
+    newApproved = 'false';
+  }
+
+  let firstname = user.firstname;
+  let lastname = user.lastname;
+
+  if (confirmation){
+    // creates an object with the id to delete 
+    const data = {firstname, lastname, newApproved, dbId};
+    // creates post options for the api request
+    const postOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }
+    // requests to post form data to the web server and reads the result as json
+    const postRes = await fetch('/api/approve_time_off_request', postOptions);
+    const postResult = await postRes.json();
+  }
+  location.reload();
 }
