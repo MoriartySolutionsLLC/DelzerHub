@@ -319,7 +319,7 @@ async function validateUser(data, _callback){
 	userDB.loadDatabase();
 
 	let result = new Promise((resolve, reject) => {
-		userDB.findOne({ username: `${data.username}`}, function (err, doc){
+		userDB.findOne({$or: [{username: `${data.username}`}, {email: `${data.username}`}]}, function (err, doc){
 			if (err) throw new Error(err);
 			if (doc != null || doc != undefined) {
 				bcrypt.compare(data.password, doc.password, function(err, result) {
