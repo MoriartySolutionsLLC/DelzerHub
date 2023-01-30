@@ -34,10 +34,21 @@ async function updateUsername() {
 		const postUser = await fetch('/api/update_username', postOptions);
 		const postUsername = await postUser.json();
 
-		console.log(postUsername.status);
 		if (postUsername.status == "success"){
+			alert('Username successfully changed.')
+			validate.username = username;
+			const postOptions = {
+				method: 'POST', 
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(validate)
+			}
+
+			const getUser = await fetch('/api/validate_user', postOptions);
+			const getUserInfo = await getVal.json();
 			localStorage.removeItem("currentlyLoggedIn");
-			localStorage.setItem("currentlyLoggedIn", JSON.stringify(getResult));
+			localStorage.setItem("currentlyLoggedIn", JSON.stringify(getUserInfo));
 			location.reload();
 		} else {
 			alert('Username already exists.\nPlease pick a different one.');
