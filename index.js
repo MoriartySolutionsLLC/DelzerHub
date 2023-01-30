@@ -292,8 +292,6 @@ function sendEmail(to, title, content){
 	// sends the email
 	transporter.sendMail(mailOptions, function(err, info){
 		if (err) throw new Error(err);
-	
-		console.log('Email sent: ' + info.response); // if successful logs email info
 	});
 }
 
@@ -455,7 +453,6 @@ async function getTimeOffData(_callback){
   const database = new Datastore('timeOff.db');
   database.loadDatabase();
   
-	console.log("Sending Event Data---->");
 	const result = new Promise((resolve, reject) => {
 		database.find({}, function(err, docs){
 			if (err) throw new Error(err);
@@ -470,7 +467,6 @@ async function getTimeOffData(_callback){
 				objectValue['endDate'] = docs[i].endDate;
 				objectValue['reason'] = docs[i].reason;
 				objectValue['approved'] = docs[i].approved;
-				console.log(objectValue);
 				eventList.push(objectValue);
 			}
 			let events = eventList;
@@ -515,7 +511,6 @@ async function sendTsheetsRequest(data){
 		request(options, function (err, response, body){
 			if (err) throw new Error(err); // throws error if request fails
 			let bod = JSON.parse(body);
-			console.log(bod);
 			let res = bod.supplemental_data.time_off_request_entries
 			if (res != null && res != undefined) {
 				let ids = Object.keys(res);
@@ -527,14 +522,12 @@ async function sendTsheetsRequest(data){
 					} else {
 						id += ids[i] + ",";
 					};
-					console.log(ids[i]);
 				}
 				return resolve(id);
 			}
 		});
 	});
 	let tsEntryId = await result;
-	console.log(tsEntryId);
 
 	let dbEntry = {'_id':tsEntryId, 'firstname':data.firstname, 'lastname':data.lastname, 'tsheetsid':data.tsheetsid, 'startDate':data.startDate, 'endDate':data.endDate, 'reason':data.reason, 'approved': data.approved}
 
