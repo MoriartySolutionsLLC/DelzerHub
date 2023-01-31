@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+		<head>
+				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+				<link rel="stylesheet" href="dispatchCallInStyle.css">
+				<link rel="stylesheet" href="styles.css">
+				<meta charset="UTF-8" />
+				<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+		    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		</head>
+		<body onload="checkLogin()">
+
+		<header>
+			<div id="loginArea">
+				<a href="login.html" class="loginBtn" id="loginBtn">Login</a>
+			</div>
+      		<a href="index.html"><img src="ddi_logo.png" class="ddi_logo"></a>
+		</header>
+
+
+		<main>
+      		<div style="top: 0; position: -webkit-sticky; position: sticky">
+				<div class="navbar">
+					<a href="index.html">Main</a>
+
+					<div class="dropdown">
+						<button class="dropbtn">All Employees
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a href="timeOffCalendar.html">Time Off Calendar</a>
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSeUCMjTwtfYFEi7oQhyRG555l1wqJzu3ibgm4PCpunNWJ9LLQ/viewform">Purchase Orders</a>
+						</div>
+					</div>
+
+					<div class="dropdown">
+						<button class="dropbtn" id="active">Dispatch
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a href="jobScheduling.html">Job Scheduling Calendar</a>
+							<a href="dispatchCallIn.html" id="dispatchCallInLink" class="active">Dispatch Call-In</a>
+						</div>
+					</div>
+
+					<div class="dropdown">
+						<button class="dropbtn">Rentbiz
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSecRGVwTR0iOviuFp_V2Fq4AOM4Bf0ewSqygiwQTS4KC5u5Qw/viewform">Transporting Equipment</a>
+						</div>
+					</div>
+
+					<a href="about.html" id="aboutnav">About</a>
+				</div>
+			</div>
+
+			<div class="header">
+				<h1>Dispatch Call In Form</h1>
+			</div>
+
+			<div class="main">
+				<div class="mainForm">
+					<div class="callInForm">
+						<form>
+							<div class="formBlock">
+								<div class="label">
+									<label for="jobClass">Job Class:</label>
+								</div>
+								<select id="jobClass" class="input">
+									<option value=""></option>
+									<option value="delzerbiz">Delzerbiz</option>
+									<option value="dirtbiz">Dirtbiz</option>
+									<option value="haulbiz">Haulbiz</option>
+									<option value="homebiz">Homebiz</option>
+									<option value="estatebiz">Real-Estatebiz</option>
+									<option value="rentbiz">Rentbiz</option>
+					                <option value="sealbiz">Sealbiz</option>				                
+									<option value="shopbiz">Shopbiz</option>
+					                <option value="snowbiz">Snowbiz</option>
+					                <option value="waterbiz">Waterbiz</option>
+								</select>
+							</div>
+							<div class="formBlock">
+								<div class="label">
+									<label for="contactName">Job Contact Name:</label>
+								</div>
+								<input type="text" id="contactName" class="input">
+							</div>
+							<div class="formBlock">
+								<div class="label">
+									<label for="contactPhone">Job Contact Phone Number:</label>
+								</div>
+								<input type="text" id="contactPhone" class="input">
+							</div>
+							<div class="formBlock">
+								<div class="label">
+									<label for="contactEmail">Job Contact Email Address:</label>
+								</div>
+								<input type="text" id="contactEmail" class="input">
+							</div>
+							<div class="formBlock">
+								<div class="label">
+									<label for="descriptionOfService">Description of Service Needed:</label>
+								</div>
+								<input type="text" id="descriptionOfService" class="input">
+							</div>
+							<div class="formBlock">
+								<div class="label">
+									<label for="ownerName">Name of Owner/Customer:</label>
+								</div>
+								<input type="text" id="ownerName" class="input">
+							</div>
+							<div class="formBlock">
+								<div class="label">
+									<label for="jobAddress">Job Address:</label>
+								</div>
+								<input type="text" id="jobAddress" class="input">
+							</div>
+							<div class="formBlock">
+								<div class="label">
+									<label for="mailingAddress">Mailing Address:</label>
+								</div>
+								<input type="text" id="mailingAddress" class="input">
+							</div>
+							<div class="formBlock">
+								<div class="label">
+									<label for="comments">Comments:</label>
+								</div>
+								<textarea id="comments" rows="4" cols="50" class="input"></textarea>
+							</div>
+							<div class="formBlock">
+								<div class="label">
+									<label for="primaryEmp">Primary Employee to Notify:</label>
+								</div>
+								<select id="primaryEmp" class="input">
+								</select>
+							</div>
+							<div class="formBlock">
+								<div class="label">
+									<label for="secondaryEmp">Secondary Employee to Notify:</label>
+								</div>
+								<select id="secondaryEmp" class="input">
+								</select>
+							</div>
+						</form>
+						<div class="sidebysideBlock">
+							<div class="btnBlock">
+								<button id="submitBtn" class="dispatchCallInBtn">Submit</button>
+							</div>
+							<button id="cancelBtn" class="dispatchCallInBtn">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br><br><br>
+		</main>
+		<script src="https://smtpjs.com/v3/smtp.js"></script>
+		<script type="text/javascript" src="dispatchCallInScript.js"></script>
+		<script type="text/javascript" src="checkLogin.js"></script>
+	</body>
+</html>

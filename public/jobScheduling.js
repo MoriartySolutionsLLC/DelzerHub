@@ -53,7 +53,6 @@ async function on_open(){
 	const getEvDRes = await fetch('/api/eventData_job_scheduling', getOptions);
 	const getEvDResult = await getEvDRes.json();
 	events = getEvDResult;
-  console.log(events[0]);
 	load();
 
 }

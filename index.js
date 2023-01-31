@@ -264,6 +264,21 @@ function main(){
       		timestamp: timestamp
     	});
   	});
+
+  /*DISPATCH CALL IN FORM API REQUESTS*/
+  app.get('/api/get_admin', (req, res) => {
+  	userDB.loadDatabase();
+  	userDB.find({$not: {workEmail: ""}}, function(err, docs){
+  		if (docs != null || docs != undefined){
+  			res.end(JSON.stringify(docs)):
+  		} else {
+  			res.json({
+  				status: 'failure'
+  			})
+  		}
+  	});
+  }
+
 }
 
 /*UNIVERSAL FUCNTIONS*/
@@ -392,9 +407,10 @@ async function updateUsers(){
 	   		let fname = users[id].first_name;
 	   		let lname = users[id].last_name;
 	   		let email = users[id].email;
+	   		let workemail = "";
 	   		let password = fname + "54321#";
 
-	   		let user = {'_id':id, 'username':email, 'firstname':fname, 'lastname':lname, 'email':email, 'password': password};
+	   		let user = {'_id':id, 'username':email, 'firstname':fname, 'lastname':lname, 'email':email, 'workemail':workemail, 'password': password};
 
 	   		const result = new Promise((resolve, reject) => {
 	   			userDB.findOne({ firstname: fname, lastname: lname}, function (err, doc){

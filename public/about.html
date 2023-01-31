@@ -8,7 +8,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 
-	<body onload="on_open()">
+	<body onload="on_open(); checkLogin()">
 		<header>
 			<div id="loginArea">
 				<a href="login.html" class="loginBtn" id="loginBtn">Login</a>
@@ -25,8 +25,8 @@
 							<i class="fa fa-caret-down"></i>
 						</button>
 						<div class="dropdown-content">
-							<a href="timeOffCalendar.html">Time Off Calendar</a>
-							<a href="https://docs.google.com/forms/d/e/1FAIpQLSeUCMjTwtfYFEi7oQhyRG555l1wqJzu3ibgm4PCpunNWJ9LLQ/viewform">Purchase Orders</a>
+							<a href="timeOffCalendar.html" id="timeOffCalendarLink">Time Off Calendar</a>
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSeUCMjTwtfYFEi7oQhyRG555l1wqJzu3ibgm4PCpunNWJ9LLQ/viewform" id="purchaseOrdersLink">Purchase Orders</a>
 						</div>
 					</div>
 
@@ -35,8 +35,8 @@
 							<i class="fa fa-caret-down"></i>
 						</button>
 						<div class="dropdown-content">
-							<a href="jobScheduling.html">Job Scheduling Calendar</a>
-							<a href="https://docs.google.com/forms/d/e/1FAIpQLSdHzZ3z_MvcYBR7bJJCrJfqtcQOApdm18fqL2DWVuGqtUrIng/viewform">Dispatch Call-In</a>
+							<a href="jobScheduling.html" id="jobSchedulingCalendarLink">Job Scheduling Calendar</a>
+							<a href="dispatchCallIn.html" id="dispatchCallInLink">Dispatch Call-In</a>
 						</div>
 					</div>
 
@@ -45,7 +45,7 @@
 							<i class="fa fa-caret-down"></i>
 						</button>
 						<div class="dropdown-content">
-							<a href="https://docs.google.com/forms/d/e/1FAIpQLSecRGVwTR0iOviuFp_V2Fq4AOM4Bf0ewSqygiwQTS4KC5u5Qw/viewform">Transporting Equipment</a>
+							<a href="https://docs.google.com/forms/d/e/1FAIpQLSecRGVwTR0iOviuFp_V2Fq4AOM4Bf0ewSqygiwQTS4KC5u5Qw/viewform" id="transportingEquipmentLink">Transporting Equipment</a>
 						</div>
 					</div>
 
@@ -55,6 +55,7 @@
 			<p>This is the about page!</p>
 		</main>
 		<script type="text/javascript" src="about.js"></script>
+		<script type="text/javascript" src="checkLogin.js"></script>
 	</body>
 
 </html>
