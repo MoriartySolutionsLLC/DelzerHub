@@ -268,16 +268,22 @@ function main(){
   /*DISPATCH CALL IN FORM API REQUESTS*/
   app.get('/api/get_admin', (req, res) => {
   	userDB.loadDatabase();
-  	userDB.find({$not: {workEmail: ""}}, function(err, docs){
+  	userDB.find({$not: {workemail: ""}}, function(err, docs){
   		if (docs != null || docs != undefined){
-  			res.end(JSON.stringify(docs)):
+  			for (let i = 0; i < docs.length; i++){
+  				delete docs[i]['password'];
+  				delete docs[i]['email'];
+  				delete docs[i]['workemail'];
+  				delete docs[i]['username'];
+  			}
+  			res.end(JSON.stringify(docs));
   		} else {
   			res.json({
   				status: 'failure'
   			})
   		}
   	});
-  }
+  });
 
 }
 

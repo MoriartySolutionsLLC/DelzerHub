@@ -8,7 +8,7 @@
 				<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 		    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		</head>
-		<body onload="checkLogin()">
+		<body onload="on_open(); checkLogin()">
 
 		<header>
 			<div id="loginArea">
@@ -69,7 +69,7 @@
 									<label for="jobClass">Job Class:</label>
 								</div>
 								<select id="jobClass" class="input">
-									<option value=""></option>
+									<option value="" selected disabled>Required</option>
 									<option value="delzerbiz">Delzerbiz</option>
 									<option value="dirtbiz">Dirtbiz</option>
 									<option value="haulbiz">Haulbiz</option>
@@ -86,13 +86,13 @@
 								<div class="label">
 									<label for="contactName">Job Contact Name:</label>
 								</div>
-								<input type="text" id="contactName" class="input">
+								<input type="text" id="contactName" class="input" placeholder="Required">
 							</div>
 							<div class="formBlock">
 								<div class="label">
 									<label for="contactPhone">Job Contact Phone Number:</label>
 								</div>
-								<input type="text" id="contactPhone" class="input">
+								<input type="text" id="contactPhone" class="input" placeholder="Required">
 							</div>
 							<div class="formBlock">
 								<div class="label">
@@ -102,9 +102,9 @@
 							</div>
 							<div class="formBlock">
 								<div class="label">
-									<label for="descriptionOfService">Description of Service Needed:</label>
+									<label for="reasonForCall">Reason for Call:</label>
 								</div>
-								<input type="text" id="descriptionOfService" class="input">
+								<input type="text" id="reasonForCall" class="input" placeholder="Required">
 							</div>
 							<div class="formBlock">
 								<div class="label">
@@ -135,6 +135,7 @@
 									<label for="primaryEmp">Primary Employee to Notify:</label>
 								</div>
 								<select id="primaryEmp" class="input">
+									<option value="" selected disabled>Required</option>
 								</select>
 							</div>
 							<div class="formBlock">
@@ -142,6 +143,7 @@
 									<label for="secondaryEmp">Secondary Employee to Notify:</label>
 								</div>
 								<select id="secondaryEmp" class="input">
+									<option value=""></option>
 								</select>
 							</div>
 						</form>
