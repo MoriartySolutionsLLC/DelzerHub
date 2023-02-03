@@ -38,9 +38,6 @@ async function on_open(){
 	const getEvDRes = await fetch('/api/eventData_time_off_calendar', getOptions);
 	const getEvDResult = await getEvDRes.json();
 	events = getEvDResult;
-  for (let i = 0; i < events.length; i++){
-    console.log(events[i])
-  }
 	load();
 }
 

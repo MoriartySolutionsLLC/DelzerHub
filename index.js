@@ -16,6 +16,8 @@ function main(){
 	timeOffDB.loadDatabase();
 	const jobSchedulingDB = new Datastore('jobScheduling.db');
 	jobSchedulingDB.loadDatabase();
+	const permissionsDB = new Datastore('permissions.db');
+	permissionsDB.loadDatabase();
 
 	const express = require('express');
 	const app = express();
@@ -25,6 +27,23 @@ function main(){
 	app.listen(port, () => console.log(`app listening at ${port}`));
 	app.use(express.static('public'));
 	app.use(express.json({limit: '100mb'}));
+
+	/*UNIVERSAL API REQUESTS*/
+	app.get('/api/get_all_users', (req, res) => {
+		userDB.find({}, function(err, docs) {
+			if (docs != null || docs != undefined){
+  			for (let i = 0; i < docs.length; i++){
+  				delete docs[i]['password'];
+  				delete docs[i]['username'];
+  			}
+  			res.end(JSON.stringify(docs));
+  		} else {
+  			res.json({
+  				status: 'failure'
+  			})
+  		}
+		});
+	});
 
 	/*LOGIN API REQUESTS*/
 	app.get('/api/update_users', (req, res) => {
@@ -86,6 +105,15 @@ function main(){
 		});
 
 	});
+
+	/*EMPLOYEE LIST API REQUESTS*/ 
+	app.post('/api/update_user_permission', (req, res) => {
+		//TODO
+	});
+
+	app.post('/api/update_user_info', (req, res) => {
+		//TODO
+	})
 
 	/*THESE API REQUESTS ARE FOR TIME OFF CALENDAR*/
 	app.get('/api/eventData_time_off_calendar', (req, res) =>{
@@ -356,7 +384,9 @@ async function validateUser(data, _callback){
 						return resolve(null);
 					}
 				});
-			};
+			} else {
+				return resolve(null);
+			}
 		});
 	});
 	let foundUser = await result;
@@ -414,6 +444,7 @@ async function updateUsers(){
 	   		let lname = users[id].last_name;
 	   		let email = users[id].email;
 	   		let workemail = "";
+	   		let number = users[id].mobile_number;
 	   		let password = fname + "54321#";
 
 	   		let user = {'_id':id, 'username':email, 'firstname':fname, 'lastname':lname, 'email':email, 'workemail':workemail, 'password': password};

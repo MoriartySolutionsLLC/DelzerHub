@@ -12,7 +12,6 @@ async function on_open() {
 	const getAdmin = await fetch('/api/get_admin', getOptions);
 	const getAdminResults = await getAdmin.json();
 	admins = getAdminResults;
-	console.log(admins);
 
 	let primSelect = document.getElementById('primaryEmp');
 	let secSelect = document.getElementById('secondaryEmp');

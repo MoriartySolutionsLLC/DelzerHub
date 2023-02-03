@@ -13,12 +13,13 @@
 	<head>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="styles.css">
+		<link rel="stylesheet" href="employeeListStyle.css">
 		<meta charset="UTF-8">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 
-	<body onload="on_open(); checkLogin(); checkPerm()">
+	<body onload="on_open(); checkLogin()">
 		<header>
 			<div id="loginArea">
 				<a href="login.html" class="loginBtn" id="loginBtn">Login</a>
@@ -26,10 +27,10 @@
       		<a href="index.html"><img src="ddi_logo.png" class="ddi_logo"></a>
 		</header>
 
-		<main>
+		<main align="center">
 			<div style="top: 0; position: -webkit-sticky; position: sticky">
 				<div class="navbar">
-					<a href="index.html" class="active">Main</a>
+					<a href="index.html">Main</a>
 
 					<div class="dropdown">
 						<button class="dropbtn">All Employees
@@ -60,28 +61,62 @@
 						</div>
 					</div>
 
-					<div class="dropdown">
-						<button class="dropbtn" id='adminstrationDropDown'>Administration
-							<i class="fa fa-caret-down"></i>
-						</button>
-						<div class="dropdown-content">
-							<a id="employeeListLink">EmployeeList</a>
-						</div>
-					</div>
-
 					<a href="about.html" id="aboutnav">About</a>
 				</div>
 			</div>
 
-			<p>This is the Main Hub! This website is currently under construction.<br>If you have any questions, comments, or criticism please contact Kian Moriarty at kian.moriarty@delzerbiz.com.
-			
-			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
-			</p>
+			<div id="editUserModal">
+				<div class="header2">
+					<h2>Edit Employee</h2>
+				</div>
+
+				<form id="edit_employee_form">
+					<label for="modalEmpName">Employee Name</label>
+					<input type="text" id="modalEmpName" class="input" disabled>
+					<br><br>
+
+					<label for="modalEmpEmail">Employee Email</label>
+					<input type="text" id="modalEmpEmail" class="input" disabled>
+					<br><br>
+
+					<label for="modalEmpWorkEmail">Employee Work Email</label>
+					<input type="text" id="modalEmpWorkEmail" class="input">
+					<br><br>
+
+					<label for="modalEmpNumber">Employee Phone Number</label>
+					<input type="text" id="modalEmpNumber" class="input"disabled>
+					<br><br>
+				</form>
+
+				<button id="updateBtn">Update</button>
+				&nbsp;
+				<button id="cancelBtn">Cancel</button>
+			</div>
+
+			<div id="modalBackDrop"></div>
+
+			<div class="header">
+				<h1>Employee List</h1>
+			</div>
+
+			<div class="main">
+				<div class="mainTable">
+					<div class="employeeTableDiv">
+						<table id="employeeTable">
+							<tr>
+								<th class="name">Name</th>
+								<th class="email">Email</th>
+								<th class="workEmail">Work Email</th>
+								<th class="number">Phone Number</th>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+
 		</main>
-		<script type="text/javascript" src="main.js"></script>
-		<script type="text/javascript" src="checkLogin.js"></script>
-		<script type="text/javascript" src="permissions.js"></script>
+		<script type="text/javascript" src="employeeList.js"></script>
+		<script type="text/javascript" src="checkLogin.js"></script>		
 	</body>
-
 </html>

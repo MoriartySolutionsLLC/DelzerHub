@@ -1,0 +1,160 @@
+.header {
+  width: 100%;
+  background-color: #444444;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+h1 {
+  font-size: 50px;
+  color: white;
+}
+
+.header2 {
+	width: 100%;
+  	background-color: #444444;
+  	padding-top: 1px;
+  	padding-bottom: 1px;
+}
+
+h2 {
+  font-size: 30px;
+  color: white;
+}
+
+.main {
+    flex: 3 1 0%;
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.mainTable {
+ 	padding-top: 25px;
+ 	max-width: 900px;
+  	width: 100%;
+}
+
+.employeeTableDiv {
+	display: flex;
+  	flex-direction: column;
+  	row-gap: 10px;
+}
+
+#employeeTable {
+	table-layout: fixed;
+	border-collapse: collapse;
+	width:100%;
+}
+
+#employeeTable td, #employeeTable th {
+	border: 1px solid #ddd;
+  	padding: 8px;
+}
+
+#employeeTable tr:nth-child(even){
+	background-color: #f2f2f2;
+}
+
+#employeeTable tr:hover {
+	color: white;
+	background-color: #615C96;
+}
+
+#employeeTable th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #333333;
+  color: white;
+}
+
+#employeeTable th.name, #employeeTable th.number {
+	width: 20%;
+}
+
+#employeeTable th.email, #employeeTable th.workEmail {
+	max-width: 30%;
+}
+
+#employeeTable td {
+	word-wrap: break-word;
+}
+
+#editUserModal {
+	display: none;
+	flex-direction: column;
+	row-gap: 10px;
+  	z-index: 20;
+  	padding: 25px;
+ 	background-color: #FFFEFD;
+  	box-shadow: 0px 0px 3px black;
+  	border-radius: 5px;
+  	width: 350px;
+  	top: 100px;
+  	left: calc(50% - 175px);
+  	position: absolute;
+}
+
+button {
+	font-weight: 700;
+  	min-width: 75px;
+  	cursor: pointer;
+  	border: none;
+  	outline: none;
+  	padding: 5px;
+  	border-radius: 5px;
+  	background-color: #4B4788;
+  	color: white;
+}
+
+button:hover {
+  	background-color: #615C96;
+}
+
+#edit_employee_form {
+	padding-top: 14px;
+}
+
+.label {
+	font-weight: 700;
+	padding-bottom: 8px;
+}
+
+.input {
+	appearance: none;
+    background-image: none;
+    border: 0px;
+    display: block;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 400;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border-radius: 4px;
+    padding: 14px;
+    background-color: var(--background-base,#ffffff);
+    box-shadow: inset 0 0 0 1px var(--essential-subdued,#878787);
+    color: var(--text-base,#000000);
+}
+
+.input:disabled {
+	background-color: #EEEEEE;
+	color: #AAAAAA;
+}
+
+#modalBackDrop {
+  display: none;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+  width: 100vw;
+  height: 500vh;
+  position: absolute;
+  background-color: rgba(0,0,0,0.8);
+}
+
