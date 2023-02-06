@@ -3,6 +3,16 @@ const editUserModal = document.getElementById('editUserModal');
 const backDrop = document.getElementById('modalBackDrop');
 
 async function on_open() {
+	let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+	if (user != null){
+	    document.getElementById('loginBtn').textContent = "Logout";
+	    let userSettings = document.createElement('a');
+	    userSettings.setAttribute('href', 'userEdit.html');
+	    userSettings.innerHTML = `${user.firstname} ${user.lastname}`;
+	    userSettings.setAttribute('class', 'userEdit');
+	    document.getElementById('loginArea').appendChild(userSettings);
+	}
+
 	let employeeTableRef = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
 
 	// creates the options for the get api request
@@ -69,5 +79,24 @@ function closeModal() {
 }
 
 async function updateEmp(pickedEmp) {
-	console.log(`${pickedEmp.firstname} ${pickedEmp.lastname} was updated.`)
+	pickedEmp.workemail = document.getElementById('modalEmpWorkEmail').value;
+
+	const postOptions = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(pickedEmp)
+	}
+
+	const updateRes = await fetch('/api/update_user_info', postOptions);
+	const updateResults = await updateRes.json();
+
+	if (updateResults.status == 'failure') {
+		alert('Failed to update database\nContact administrator if this problem persists.');
+	} else {
+		console.log(`${pickedEmp.firstname} ${pickedEmp.lastname} was updated.`)
+	}
+
+	closeModal();
 }

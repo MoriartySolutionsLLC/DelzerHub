@@ -19,7 +19,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 
-	<body onload="on_open(); checkLogin()">
+	<body onload="on_open(); checkLogin(); checkPerm()">
 		<header>
 			<div id="loginArea">
 				<a href="login.html" class="loginBtn" id="loginBtn">Login</a>
@@ -48,7 +48,8 @@
 						</button>
 						<div class="dropdown-content">
 							<a href="jobScheduling.html" id="jobSchedulingCalendarLink">Job Scheduling Calendar</a>
-							<a href="dispatchCallIn.html" id="dispatchCallInLink">Dispatch Call-In</a>
+							<a href="dispatchCallIn.html" id="dispatchCallInLink">Dispatch Call-In Form</a>
+							<a href="callInHub.html" id="callInListLink">Call-In Hub</a>
 						</div>
 					</div>
 
@@ -58,6 +59,15 @@
 						</button>
 						<div class="dropdown-content">
 							<a href="https://docs.google.com/forms/d/e/1FAIpQLSecRGVwTR0iOviuFp_V2Fq4AOM4Bf0ewSqygiwQTS4KC5u5Qw/viewform" id="transportingEquipmentLink">Transporting Equipment</a>
+						</div>
+					</div>
+
+					<div class="dropdown">
+						<button class="dropbtn" id='adminstrationDropDown'>Administration
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a id="employeeListLink">Employee List</a>
 						</div>
 					</div>
 
@@ -72,19 +82,26 @@
 				</div>
 
 				<form id="edit_employee_form">
-					<label for="modalEmpName">Employee Name</label>
+					<div class="label">
+						<label for="modalEmpName">Employee Name</label>
+					</div>
 					<input type="text" id="modalEmpName" class="input" disabled>
 					<br><br>
-
-					<label for="modalEmpEmail">Employee Email</label>
+					<div class="label">
+						<label for="modalEmpEmail">Employee Email</label>
+					</div>
 					<input type="text" id="modalEmpEmail" class="input" disabled>
 					<br><br>
 
-					<label for="modalEmpWorkEmail">Employee Work Email</label>
+					<div class="label">
+						<label for="modalEmpWorkEmail">Employee Work Email</label>
+					</div>
 					<input type="text" id="modalEmpWorkEmail" class="input">
 					<br><br>
 
-					<label for="modalEmpNumber">Employee Phone Number</label>
+					<div class="label">
+						<label for="modalEmpNumber">Employee Phone Number</label>
+					</div>
 					<input type="text" id="modalEmpNumber" class="input"disabled>
 					<br><br>
 				</form>
@@ -117,6 +134,7 @@
 
 		</main>
 		<script type="text/javascript" src="employeeList.js"></script>
-		<script type="text/javascript" src="checkLogin.js"></script>		
+		<script type="text/javascript" src="checkLogin.js"></script>
+		<script type="text/javascript" src="permissions.js"></script>		
 	</body>
 </html>

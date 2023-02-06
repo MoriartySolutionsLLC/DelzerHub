@@ -1,0 +1,100 @@
+.header2 {
+  width: 100%;
+  background-color: #615C96;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+h2 {
+  font-size: 30px;
+  color: white;
+}
+
+.sidebysideBlock {
+  display: flex;
+  flex-direction: row;
+}
+
+.spacer {
+  min-width: 50px;
+}
+
+.callInColumnArea {
+  margin-right: auto;
+  margin-left: auto;
+  padding-top: 50px;
+  max-width: 600px;
+  width: 100%;
+}
+
+.callInColumn {
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.callInBlock {
+  align-content: center;
+  display: flex;
+  flex-direction: column;
+  height: 100px;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.callInBlock:hover {
+  filter: brightness(.85);
+  box-shadow: 0 0 11px rgba(33,33,33,.2);
+  cursor: pointer;
+}
+
+.callInTopBlock {
+  height: 48%;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.callInDivBlock {
+  margin: auto;
+  display: block;
+  background-color: white;
+  width: 90%;
+  height: 4%;
+}
+
+.callInBottomBlock {
+  height: 48%;
+  width: 100%;
+}
+
+#openCallInColumn .callInBlock {
+  background-color: #EE4B2B;
+}
+
+#closedCallInColumn .callInBlock {
+  background-color: #50C878;
+}
+
+.callInCell {  
+  height: 100%;
+  text-align: center;
+  align-items: center;
+  min-width: 25%;
+  max-width: 25%;
+  color: white;
+}
+
+.callInBottomCell {  
+  border-top: 2px;
+  border-color: white;
+  height: 100%;
+  text-align: center;
+  align-items: center;
+  width: 100%;
+  color: white;
+}
+

@@ -8,7 +8,7 @@
 				<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 		    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		</head>
-		<body onload="on_open(); checkLogin()">
+		<body onload="on_open(); checkLogin(); checkPerm()">
 
 		<header>
 			<div id="loginArea">
@@ -39,7 +39,8 @@
 						</button>
 						<div class="dropdown-content">
 							<a href="jobScheduling.html">Job Scheduling Calendar</a>
-							<a href="dispatchCallIn.html" id="dispatchCallInLink" class="active">Dispatch Call-In</a>
+							<a href="dispatchCallIn.html" id="dispatchCallInLink" class="active">Dispatch Call-In Form</a>
+							<a href="callInHub.html" id="callInListLink">Call-In Hub</a>
 						</div>
 					</div>
 
@@ -49,6 +50,15 @@
 						</button>
 						<div class="dropdown-content">
 							<a href="https://docs.google.com/forms/d/e/1FAIpQLSecRGVwTR0iOviuFp_V2Fq4AOM4Bf0ewSqygiwQTS4KC5u5Qw/viewform">Transporting Equipment</a>
+						</div>
+					</div>
+
+					<div class="dropdown">
+						<button class="dropbtn" id='adminstrationDropDown'>Administration
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a id="employeeListLink">Employee List</a>
 						</div>
 					</div>
 
@@ -76,7 +86,7 @@
 									<option value="homebiz">Homebiz</option>
 									<option value="estatebiz">Real-Estatebiz</option>
 									<option value="rentbiz">Rentbiz</option>
-					                <option value="sealbiz">Sealbiz</option>				                
+					                <option value="sealbiz">Sealbiz</option>              
 									<option value="shopbiz">Shopbiz</option>
 					                <option value="snowbiz">Snowbiz</option>
 					                <option value="waterbiz">Waterbiz</option>
@@ -151,7 +161,7 @@
 							<div class="btnBlock">
 								<button id="submitBtn" class="dispatchCallInBtn">Submit</button>
 							</div>
-							<button id="cancelBtn" class="dispatchCallInBtn">Cancel</button>
+							<button id="submitFormCancelBtn" class="dispatchCallInBtn">Cancel</button>
 						</div>
 					</div>
 				</div>
@@ -161,5 +171,6 @@
 		<script src="https://smtpjs.com/v3/smtp.js"></script>
 		<script type="text/javascript" src="dispatchCallInScript.js"></script>
 		<script type="text/javascript" src="checkLogin.js"></script>
+		<script type="text/javascript" src="permissions.js"></script>
 	</body>
 </html>

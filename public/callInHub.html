@@ -8,6 +8,17 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 
+	<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="styles.css">
+		<link rel="stylesheet" href="callInHubStyle.css">
+		<meta charset="UTF-8">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+
 	<body onload="on_open(); checkLogin(); checkPerm()">
 		<header>
 			<div id="loginArea">
@@ -17,10 +28,11 @@
 		</header>
 
 		<main>
-			<div class="navbar">
-				<a href="index.html">Main</a>
-				
-				<div class="dropdown">
+			<div style="top: 0; position: -webkit-sticky; position: sticky">
+				<div class="navbar">
+					<a href="index.html">Main</a>
+
+					<div class="dropdown">
 						<button class="dropbtn">All Employees
 							<i class="fa fa-caret-down"></i>
 						</button>
@@ -31,13 +43,13 @@
 					</div>
 
 					<div class="dropdown">
-						<button class="dropbtn">Dispatch
+						<button class="dropbtn" class="active">Dispatch
 							<i class="fa fa-caret-down"></i>
 						</button>
 						<div class="dropdown-content">
 							<a href="jobScheduling.html" id="jobSchedulingCalendarLink">Job Scheduling Calendar</a>
 							<a href="dispatchCallIn.html" id="dispatchCallInLink">Dispatch Call-In Form</a>
-							<a href="callInHub.html" id="callInListLink">Call-In Hub</a>
+							<a href="callInHub.html" class="active">Call-In Hub</a>
 						</div>
 					</div>
 
@@ -59,12 +71,36 @@
 						</div>
 					</div>
 
-				<a href="about.html" id="aboutnav" class="active">About</a>
+					<a href="about.html" id="aboutnav">About</a>
+				</div>
 			</div>
 
-			<p>This is the about page!</p>
+			<div class="header">
+				<h1>Call In Hub</h1>
+			</div>
+
+			<div class="main">	
+				<div class="sidebysideBlock">
+					<div class="callInColumnArea">
+						<div class="callInColumn" id="openCallInColumn">
+							<div class="header2">
+								<h2>Open Call Ins</h2>
+							</div>
+						</div>
+					</div>
+					<div class="spacer"></div>
+					<div class = "callInColumnArea">
+						<div class = "callInColumn" id="closedCallInColumn">
+							<div class="header2">
+								<h2>Closed Call Ins</h2>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 		</main>
-		<script type="text/javascript" src="about.js"></script>
+		<script type="text/javascript" src="callInHub.js"></script>
 		<script type="text/javascript" src="checkLogin.js"></script>
 		<script type="text/javascript" src="permissions.js"></script>
 	</body>

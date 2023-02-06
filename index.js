@@ -18,6 +18,8 @@ function main(){
 	jobSchedulingDB.loadDatabase();
 	const permissionsDB = new Datastore('permissions.db');
 	permissionsDB.loadDatabase();
+	const dispatchCallInDB = new Datastore('dispatchCallIn.db');
+	dispatchCallInDB.loadDatabase();
 
 	const express = require('express');
 	const app = express();
@@ -112,7 +114,20 @@ function main(){
 	});
 
 	app.post('/api/update_user_info', (req, res) => {
-		//TODO
+		userDB.loadDatabase();
+		const data = req.body;
+
+		userDB.update({_id: `${data._id}`}, {$set: {workemail: `${data.workemail}`}}, {}, function(err, numReplaced) {
+			if (err) {
+				res.json({
+					status: 'failure'
+				});
+				throw new Error(err);
+			};
+			res.json({
+				status:'success'
+			});
+		});
 	})
 
 	/*THESE API REQUESTS ARE FOR TIME OFF CALENDAR*/
@@ -301,7 +316,6 @@ function main(){
   			for (let i = 0; i < docs.length; i++){
   				delete docs[i]['password'];
   				delete docs[i]['email'];
-  				delete docs[i]['workemail'];
   				delete docs[i]['username'];
   			}
   			res.end(JSON.stringify(docs));
@@ -313,6 +327,50 @@ function main(){
   	});
   });
 
+  app.post('/api/submit_dispatch_callin', (req, res) => {
+  	try {
+	  	const data = req.body;
+	  	const submissionDate = new Date();
+	  	const date = submissionDate.toLocaleDateString();
+	  	data.submissionDate = submissionDate;
+
+	  	dispatchCallInDB.insert(data);
+
+	  	let to = `${data.primaryEmail}`
+	  	if (data.secondaryEmail != "") {
+	  		to += `,${data.secondaryEmail}`;
+	  	}
+	  	let title = `Dispatch Call In - ${data.contactName} - ${data.jobAddress} - ${date}`;
+	  	let content = `Date: ${date}\n\nEmployee: ${data.empName}\n\nJob Class: ${data.jobClass}\n\nJob Contact: ${data.contactName}
+	  	\nContact Phone: ${data.contactPhone}\n\nContact Email: ${data.contactEmail}\n\nOwner/Customer Name: ${data.ownerName}
+	  	\nJob Address: ${data.jobAddress}\n\nReason for Call: ${data.reasonForCall}\n\nMailing Address: ${data.mailingAddress}
+	  	\nComments: ${data.comments}\n\nPrimary Staff Member: ${data.primaryEmp}\n\nSecondary Staff Member: ${data.secondaryEmp}`;
+
+	  	sendEmail(to, title, content);
+
+	  	res.json({
+	  		status: 'success'
+	  	});
+	  } catch (e) {
+	  	console.log(e);
+	  	res.json({
+	  		status: 'failure'
+	  	});
+	  }
+  });
+
+  /*CALL IN HUB API REQUESTS*/
+  app.get('/api/get_callins', (req, res) => {
+  	dispatchCallInDB.find({}, function(err, docs) {
+  		if (docs != null || docs != undefined){
+  			res.end(JSON.stringify(docs));
+  		} else {
+  			res.json({
+  				status: 'failure'
+  			})
+  		}
+  	})
+  })
 }
 
 /*UNIVERSAL FUCNTIONS*/

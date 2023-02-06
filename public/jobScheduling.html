@@ -8,7 +8,7 @@
 				<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 		    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		</head>
-		<body onload="todays_date(); on_open(); load(); initButtons(); checkLogin()">
+		<body onload="todays_date(); on_open(); load(); initButtons(); checkLogin(); checkPerm()">
 
 		<header>
 			<div id="loginArea">
@@ -39,7 +39,8 @@
 						</button>
 						<div class="dropdown-content">
 							<a href="jobScheduling.html" id="jobSchedulingCalendarLink" class="active">Job Scheduling Calendar</a>
-							<a href="dispatchCallIn.html" id="dispatchCallInLink">Dispatch Call-In</a>
+							<a href="dispatchCallIn.html" id="dispatchCallInLink">Dispatch Call-In Form</a>
+							<a href="callInHub.html" id="callInListLink">Call-In Hub</a>
 						</div>
 					</div>
 
@@ -49,6 +50,15 @@
 						</button>
 						<div class="dropdown-content">
 							<a href="https://docs.google.com/forms/d/e/1FAIpQLSecRGVwTR0iOviuFp_V2Fq4AOM4Bf0ewSqygiwQTS4KC5u5Qw/viewform" id="transportingEquipmentLink">Transporting Equipment</a>
+						</div>
+					</div>
+
+					<div class="dropdown">
+						<button class="dropbtn" id='adminstrationDropDown'>Administration
+							<i class="fa fa-caret-down"></i>
+						</button>
+						<div class="dropdown-content">
+							<a id="employeeListLink">Employee List</a>
 						</div>
 					</div>
 
@@ -208,5 +218,6 @@
 		<script src="https://smtpjs.com/v3/smtp.js"></script>
 		<script type="text/javascript" src="jobScheduling.js"></script>
 		<script type="text/javascript" src="checkLogin.js"></script>
+		<script type="text/javascript" src="permissions.js"></script>
 	</body>
 </html>
