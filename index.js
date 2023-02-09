@@ -333,6 +333,8 @@ function main(){
 	  	const submissionDate = new Date();
 	  	const date = submissionDate.toLocaleDateString();
 	  	data.submissionDate = submissionDate;
+	  	const timestamp = Date.now();
+			data.timestamp = timestamp;
 
 	  	dispatchCallInDB.insert(data);
 
@@ -361,7 +363,7 @@ function main(){
 
   /*CALL IN HUB API REQUESTS*/
   app.get('/api/get_callins', (req, res) => {
-  	dispatchCallInDB.find({}, function(err, docs) {
+  	dispatchCallInDB.find({}).sort({ timestamp: -1}).exec(function(err, docs) {
   		if (docs != null || docs != undefined){
   			res.end(JSON.stringify(docs));
   		} else {
@@ -371,6 +373,61 @@ function main(){
   		}
   	})
   })
+
+  app.post('/api/close_callin', (req, res) => {
+  	dispatchCallInDB.loadDatabase();
+  	const data = req.body;
+  	dispatchCallInDB.update({ _id: `${data._id}` }, { $set: { handled: 'true' }}, {}, function(err, numReplaced) {
+  		if (err) throw new Error(err);
+
+  		if (numReplaced < 1) {
+  			res.json({
+  				status: 'failure'
+  			});
+  		} else {
+  			res.json({
+  				status: 'success'
+  			});
+  		}
+  	});
+  });
+
+  app.post('/api/reopen_callin', (req, res) => {
+  	dispatchCallInDB.loadDatabase();
+  	const data = req.body;
+  	dispatchCallInDB.update({ _id: `${data._id}` }, { $set: { handled: 'false' }}, {}, function(err, numReplaced) {
+  		if (err) throw new Error(err);
+
+  		if (numReplaced < 1) {
+  			res.json({
+  				status: 'failure'
+  			});
+  		} else {
+  			res.json({
+  				status: 'success'
+  			});
+  		}
+  	});
+  });
+
+  app.post('/api/add_callinnotes', (req, res) => {
+  	dispatchCallInDB.loadDatabase();
+  	const data = req.body;
+  	dispatchCallInDB.update({ _id: `${data._id}` }, { $set: { notes: `${data.notes}` }}, {}, function(err, numReplaced) {
+  		if (err) throw new Error(err);
+
+  		if (numReplaced < 1) {
+  			res.json({
+  				status: 'failure'
+  			});
+  		} else {
+  			res.json({
+  				status: 'success'
+  			});
+  		}
+  	});
+  });
+
 }
 
 /*UNIVERSAL FUCNTIONS*/

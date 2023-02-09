@@ -1,8 +1,20 @@
 let callIns = {};
+const callInModal = document.getElementById('viewCallInModal');
+const backDrop = document.getElementById('modalBackDrop');
 
 async function on_open() {
+	let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+	if (user != null){
+	    document.getElementById('loginBtn').textContent = "Logout";
+	    let userSettings = document.createElement('a');
+	    userSettings.setAttribute('href', 'userEdit.html');
+	    userSettings.innerHTML = `${user.firstname} ${user.lastname}`;
+	    userSettings.setAttribute('class', 'userEdit');
+	    document.getElementById('loginArea').appendChild(userSettings);
+	}
+
 	let openCallInColumn = document.getElementById('openCallInColumn');
-	let closedCallInColumn = document.getElementById('closedCallInColumn')
+	let closedCallInColumn = document.getElementById('closedCallInColumn');
 	// creates the options for the get api request
 	const getOptions = {
 		method: 'GET',
@@ -42,6 +54,20 @@ async function on_open() {
 			callInDate.setAttribute('class', 'callInCell');
 			callInComment.setAttribute('class', 'callInBottomCell');
 
+			let reasonStr = '';
+			if (getCallIns[i].reasonForCall.split('').length > 15) {
+				reasonStr = getCallIns[i].reasonForCall.substring(0,15) + '...';
+			} else {
+				reasonStr = getCallIns[i].reasonForCall;
+			}
+
+			let commentStr = '';
+			if (getCallIns[i].comments.split('').length > 50) {
+				commentStr = getCallIns[i].comments.substring(0,50) + '...';
+			} else {
+				commentStr = getCallIns[i].comments;
+			}
+
 			let subDate = new Date(getCallIns[i].submissionDate);
 			let month = subDate.getMonth() + 1;
 			let day = subDate.getDate();
@@ -49,13 +75,28 @@ async function on_open() {
 			if (day < 10) day = '0' + day;
 			if (month < 10) month = '0' + month;
 			let date = `${month}/${day}/${year}`;
+			getCallIns[i].submissionDate = date;
 
+			let phoneArray = getCallIns[i].contactPhone.split('');
+			let phoneStr = "(";
+			for (let k = 0; k < phoneArray.length; k++){
+				if (k == 3){
+					phoneStr += ")-";
+				} else if (k == 6) {
+					phoneStr += "-";
+				}
+				phoneStr += phoneArray[k];
+			}
+
+			getCallIns[i].contactPhone = phoneStr;
+
+			getCallIns[i].jobClass = getCallIns[i].jobClass.charAt(0).toUpperCase() + getCallIns[i].jobClass.slice(1);
 
 			callInContactNameText.innerHTML = getCallIns[i].contactName;
 			callInContactNumberText.innerHTML = getCallIns[i].contactPhone;
-			callInReasonText.innerHTML = getCallIns[i].reasonForCall;
+			callInReasonText.innerHTML = reasonStr;
 			callInDateText.innerHTML = date;
-			callInCommentText.innerHTML = getCallIns[i].comments;
+			callInCommentText.innerHTML = commentStr;
 
 			callInContactName.appendChild(callInContactNameText);
 			callInContactNumber.appendChild(callInContactNumberText);
@@ -89,4 +130,120 @@ async function on_open() {
 
 function callInBlockBtnHandler(callIn) {
 	console.log(callIn)
+	if (callIn != null && callIn != undefined){
+		//document.body.style.overflow = 'hidden';
+		document.getElementById('noteBtn').addEventListener('click', () => addNote(callIn));
+		document.getElementById('cancelBtn').addEventListener('click', () => closeModal());
+		document.getElementById('modalHeader').innerHTML = `${callIn.contactName} - ${callIn.submissionDate}`;
+		document.getElementById('modalJobClass').innerHTML = `Job Class: ${callIn.jobClass}`;
+		document.getElementById('modalJobContact').innerHTML = `Job Contact: ${callIn.contactName}`;
+		document.getElementById('modalPhone').innerHTML = `Contact Phone: ${callIn.contactPhone}`;
+		document.getElementById('modalContactEmail').innerHTML = `Contact Email: ${callIn.contactEmail}`;
+		document.getElementById('modalOwnerName').innerHTML = `Owner Name: ${callIn.ownerName}`;
+		document.getElementById('modalMailingAddress').innerHTML = `Mailing Address: ${callIn.mailingAddress}`;
+
+		document.getElementById('modalReason').innerHTML = `Reason For Call: ${callIn.reasonForCall}`;
+		document.getElementById('modalComments').innerHTML = `Comments: ${callIn.comments}`;
+		if (callIn.notes != null && callIn.notes != undefined && callIn.notes != "") {
+			let notesString = "<u>Notes:</u><br><br>";
+			let notesSplit = callIn.notes.split('::');
+
+			for (let i = 0; i < notesSplit.length; i++){
+				if (i < notesSplit.length - 1) {
+					notesString += `${notesSplit[i]}<br><br>`;
+				} else {
+					notesString += `${notesSplit[i]}<br>`
+				}
+			}
+
+			document.getElementById('modalNotes').innerHTML = notesString;
+		}
+
+		callInModal.style.display = "block";
+		backDrop.style.display = "block";
+		if (callIn.handled == 'false') {
+			document.getElementById('closeBtn').addEventListener('click', () => closeCallIn(callIn));
+		} else {
+			let reOpenBtn = document.getElementById('closeBtn');
+			reOpenBtn.innerHTML = 'Reopen Call In';
+			reOpenBtn.addEventListener('click', () => reopenCallIn(callIn));
+		}
+	} else {
+		alert('ERROR: Something went wrong');
+	}
+}
+
+async function closeCallIn(callIn){
+	const postOptions = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(callIn)
+	}
+
+	const closeCallInRes = await fetch('/api/close_callin', postOptions);
+	const closeCallInResults = await closeCallInRes.json();
+
+	if (closeCallInResults.status == 'failure'){
+		alert('ERROR: An error has occured.');
+	}
+	closeModal();
+}
+
+async function reopenCallIn(callIn){
+	const postOptions = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(callIn)
+	}
+
+	const reopenCallInRes = await fetch('/api/reopen_callin', postOptions);
+	const reopenCallInResults = await reopenCallInRes.json();
+
+	if (reopenCallInResults.status == 'failure'){
+		alert('ERROR: An error has occured.');
+	}
+	closeModal();
+}
+
+async function addNote(callIn){
+	let user = JSON.parse(localStorage.getItem('currentlyLoggedIn'));
+	let usersName = `${user.firstname} ${user.lastname}`;
+	let notes = document.getElementById('addNotesField').value;
+	let submissionDate = new Date();
+	let date = submissionDate.toLocaleDateString();
+	let notesString;
+	if (callIn.notes == null || callIn.notes == undefined || callIn.notes == ""){
+		notesString = "";
+	} else {
+		notesString = "::";
+	}
+	notesString += `${usersName} - ${date} - ${notes}`;
+
+	callIn.notes += notesString;
+
+	const postOptions = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(callIn)
+	}
+
+	const closeCallInRes = await fetch('/api/add_callinnotes', postOptions);
+	const closeCallInResults = await closeCallInRes.json();
+
+	if (closeCallInResults.status == 'failure'){
+		alert('ERROR: An error has occured.');
+	}
+	closeModal();
+}
+
+function closeModal() {
+	callInModal.style.display = 'none';
+	backDrop.style.display = 'none';
+	window.open('callInHub.html', '_self');
 }

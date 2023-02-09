@@ -97,6 +97,5 @@ async function updateEmp(pickedEmp) {
 	} else {
 		console.log(`${pickedEmp.firstname} ${pickedEmp.lastname} was updated.`)
 	}
-
 	closeModal();
 }

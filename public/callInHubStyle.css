@@ -98,3 +98,98 @@ h2 {
   color: white;
 }
 
+#viewCallInModal {
+    display: none;
+    flex-direction: column;
+    row-gap: 10px;
+    z-index: 20;
+    padding: 25px;
+    background-color: #FFFEFD;
+    box-shadow: 0px 0px 3px black;
+    border-radius: 5px;
+    width: 600px;
+    left: calc(50% - 300px);
+    top: 50px;
+    position: absolute;
+}
+
+.modalColumn {
+  width: 50%;
+  padding-bottom: 10px;
+}
+
+.label {
+  font-weight: 700;
+}
+
+.modalPriorNotesBox {
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 5px;
+  border-color: #333333;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.modalAddNotesArea {
+  padding-top: 20px;
+}
+
+.modalNotesBox {
+  padding-bottom: 20px;
+}
+
+.input {
+    appearance: none;
+    background-image: none;
+    border: 0px;
+    display: block;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 400;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border-radius: 4px;
+    padding: 14px;
+    background-color: var(--background-base,#ffffff);
+    box-shadow: inset 0 0 0 1px var(--essential-subdued,#878787);
+    color: var(--text-base,#000000);
+}
+
+#modalBackDrop {
+  display: none;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+  width: 100%;
+  height: 200%;
+  position: absolute;
+  background-color: rgba(0,0,0,0.8);
+}
+
+.btnDiv {
+  display: flex;
+  width: 100%;
+  align-content: center;
+  justify-content: center;
+  margin: auto;
+}
+
+button {
+  font-weight: 700;
+    min-width: 75px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #4B4788;
+    color: white;
+}
+
+button:hover {
+    background-color: #615C96;
+}

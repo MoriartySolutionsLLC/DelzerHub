@@ -79,6 +79,69 @@
 				<h1>Call In Hub</h1>
 			</div>
 
+			<div id="viewCallInModal">
+				<div class="header2">
+					<h2 id="modalHeader"></h2>
+				</div>
+
+				<div class="sidebysideBlock">
+					<div class="modalColumn">
+						<div class="label">
+							<p id="modalJobClass"></p>
+						</div>
+						<div class="label">
+							<p id="modalJobContact"></p>
+						</div>
+						<div class="label">
+							<p id="modalPhone"></p>
+						</div>
+						<div class="label">
+							<p id="modalContactEmail"></p>
+						</div>
+						<div class="label">
+							<p id="modalOwnerName"></p>
+						</div>
+						<div class="label">
+							<p id="modalMailingAddress"></p>
+						</div>
+					</div>
+					
+					<div class="modalColumn">
+						<div class="label">
+							<p id="modalReason"></p>
+						</div>
+						<div class="label">
+							<p id="modalComments"></p>
+						</div>
+					</div>
+				</div>
+
+				<div class="modalPriorNotesBox">
+					<div class="label">
+						<p id="modalNotes"></p>
+					</div>
+				</div>
+
+				<div class="modalAddNotesArea">
+					<div class="label">
+						<label for="addNotesField">Add Notes:</label>
+					</div>
+					<div class="modalNotesBox">
+						<textarea id="addNotesField" class="input"></textarea>
+					</div>
+				</div>
+
+				<div class="btnDiv">
+					<button id="closeBtn">Close Call In</button>
+					&nbsp;
+					<button id="noteBtn">Add Note</button>
+					&nbsp;
+					<button id="cancelBtn">Cancel</button>
+				</div>
+			</div>
+
+			<div id="modalBackDrop"></div>
+
 			<div class="main">	
 				<div class="sidebysideBlock">
 					<div class="callInColumnArea">
@@ -98,7 +161,6 @@
 					</div>
 				</div>
 			</div>
-
 		</main>
 		<script type="text/javascript" src="callInHub.js"></script>
 		<script type="text/javascript" src="checkLogin.js"></script>
