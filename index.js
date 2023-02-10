@@ -33,7 +33,7 @@ function main(){
 	/*UNIVERSAL API REQUESTS*/
 	app.get('/api/get_all_users', (req, res) => {
 		userDB.find({}, function(err, docs) {
-			if (docs != null || docs != undefined){
+			if (docs != null && docs != undefined){
   			for (let i = 0; i < docs.length; i++){
   				delete docs[i]['password'];
   				delete docs[i]['username'];
@@ -63,6 +63,21 @@ function main(){
 			res.end(data);
 		})
 	});
+
+	app.post('/api/get_userPermissions', (req, res) => {
+		permissionsDB.loadDatabase();
+		const data = req.body;
+
+		permissionsDB.findOne({_id: `${data.tsheetsid}`}, function (err, docs) {
+			if (docs != null && docs != undefined) {
+				res.end(JSON.stringify(docs));
+			} else {
+				res.json({
+					status: 'failure'
+				});
+			}
+		})
+	})
 
 	/*EDIT USER API REQUESTS*/
 	app.post('/api/update_username', (req, res) => {
@@ -128,6 +143,50 @@ function main(){
 				status:'success'
 			});
 		});
+	});
+
+	app.get('/api/get_allpermissions', (req, res) => {
+		permissionsDB.loadDatabase();
+		permissionsDB.find({}, function (err, docs) {
+			if (docs != null && docs != undefined) {
+				res.end(JSON.stringify(docs));
+			} else {
+				res.json({
+					status: 'failure'
+				})
+			}
+		})
+	});
+
+	app.post('/api/add_permissionsList', (req, res) => {
+		const data = req.body;
+		console.log('adding permissions')
+		try {
+			permissionsDB.insert(data);
+			res.json({
+				status: 'success'
+			})
+		} catch (e) {
+			res.json({
+				status: 'failure'
+			})
+		}
+	})
+
+	app.post('/api/update_permissionsList', (req, res) => {
+		permissionsDB.loadDatabase();
+		const data = req.body;
+		console.log(data)
+		try {
+			permissionsDB.update({_id: `${data._id}`}, {$set: { jobSchedulingCalendarView: data.jobSchedulingCalendarView, dispatchCallInFormView: data.dispatchCallInFormView, callInHubView: data.callInHubView, transportingEquipmentForm: data.transportingEquipmentForm, employeeListView: data.employeeListView}})
+			res.json({
+				status: 'success'
+			})
+		} catch (e) {
+			res.json({
+				status: 'failure'
+			})
+		}
 	})
 
 	/*THESE API REQUESTS ARE FOR TIME OFF CALENDAR*/
@@ -481,6 +540,8 @@ async function validateUser(data, _callback){
 	const bcrypt = require('bcrypt');
 	const userDB = new Datastore('user.db');
 	userDB.loadDatabase();
+	const permissionsDB = new Datastore('permissions.db');
+	permissionsDB.loadDatabase();
 
 	let result = new Promise((resolve, reject) => {
 		userDB.findOne({$or: [{username: `${data.username}`}, {email: `${data.username}`}]}, function (err, doc){
@@ -494,7 +555,14 @@ async function validateUser(data, _callback){
 						let user = {'tsheetsid': doc._id, 'username':doc.username, 'firstname': doc.firstname, 'lastname': doc.lastname};
 						let loggInfo = {'username': doc.username, 'timestamp': timestamp};
 						loggingDB.insert(loggInfo);
-						return resolve(user);
+						permissionsDB.findOne({_id: `${doc._id}`}, function (err, doc2) {
+							if (err) throw new Error(err);
+							if (doc2 != null || doc2 != undefined) {
+								return resolve(user, doc2);
+							} else {
+								return resolve(user);
+							}
+						});
 					} else {
 						return resolve(null);
 					}

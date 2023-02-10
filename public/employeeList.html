@@ -67,7 +67,7 @@
 							<i class="fa fa-caret-down"></i>
 						</button>
 						<div class="dropdown-content">
-							<a id="employeeListLink">Employee List</a>
+							<a href="employeeList.html" id="employeeListLink">Employee List</a>
 						</div>
 					</div>
 
@@ -78,7 +78,18 @@
 
 			<div id="editUserModal">
 				<div class="header2">
-					<h2>Edit Employee</h2>
+					<h2 id="modalHeader"></h2>
+				</div>
+
+				<div class="optionTabs">
+					<div class="sidebysideBlock">
+						<div class="optionTab" id="selectedTab">
+							<p>Information</p>
+						</div>
+						<div class="optionTab" id="permTab">
+							<p>Permissions</p>
+						</div>
+					</div>
 				</div>
 
 				<form id="edit_employee_form">
@@ -104,6 +115,51 @@
 					</div>
 					<input type="text" id="modalEmpNumber" class="input"disabled>
 					<br><br>
+				</form>
+
+				<form id="permissions_form">
+					<div class="permLabel">
+						<p>Dispatch Tab Permissions</p>
+					</div>
+					<div class="checkBox">
+						<input type="checkbox" id="jobSchedulingCalendarViewPermCheckBox">
+						<div class="checkBoxLabel">
+							<label for="jobSchedulingCalendarViewPermCheckBox">Job Scheduling Calendar View</label>
+						</div>
+					</div>
+					<div class="checkBox">
+						<input type="checkbox" id="dispatchCallInFormViewPermCheckBox">
+						<div class="checkBoxLabel">
+							<label for="dispatchCallInFormPermCheckBox">Dispatch Call In Form</label>
+						</div>
+					</div>
+					<div class="checkBox">
+						<input type="checkbox" id="callInHubViewPermCheckBox">
+						<div class="checkBoxLabel">
+							<label for="callInHubViewPermCheckBox">Call In Hub View</label>
+						</div>
+					</div>
+
+					<div class="permLabel">
+						<p>Rentbiz Tab Permissions</p>
+					</div>
+					<div class="checkBox">
+						<input type="checkbox" id="transportingEquipmentFormPermCheckBox">
+						<div class="checkBoxLabel">
+							<label for="transportingEquipmentFormPermCheckBox">Transporting Equipment Form</label>
+						</div>
+					</div>
+
+					<div class="permLabel">
+						<p>Administration Tab Permissions</p>
+					</div>
+					<div class="checkBox">
+						<input type="checkbox" id="employeeListViewPermCheckBox">
+						<div class="checkBoxLabel">
+							<label for="employeeListViewPermCheckBox">Employee List View</label>
+						</div>
+					</div>
+
 				</form>
 
 				<button id="updateBtn">Update</button>

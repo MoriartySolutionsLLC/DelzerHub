@@ -94,9 +94,12 @@ h2 {
   	width: 350px;
   	top: 50px;
   	left: calc(50% - 175px);
-  	top: 0; 
-    position: -webkit-sticky;
-    position: sticky;
+  	top: 50px; 
+    position: absolute;
+}
+
+#permissions_form {
+  display: none;
 }
 
 button {
@@ -124,6 +127,31 @@ button:hover {
 	padding-bottom: 8px;
 }
 
+.permLabel {
+  text-align: center;
+  line-height: 30px;
+  font-weight: 700;
+  height: 30px;
+  background-color: #555555;
+  color: white;
+}
+
+#permissions_form {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.checkBox {
+  padding-top: 5px;
+  display: flex;
+  flex-direction: row;
+}
+
+.checkBoxLabel {
+  font-weight: 700;
+  padding-left: 10px;
+}
+
 .input {
 	appearance: none;
     background-image: none;
@@ -149,14 +177,39 @@ button:hover {
 	color: #AAAAAA;
 }
 
+.sidebysideBlock {
+  display: flex;
+  flex-direction: row;
+}
+
+.optionTab {
+  width: 50%;
+  align-content: center;
+  color: white;
+  background-color: #555555;
+}
+
+.optionTab:hover {
+  cursor: pointer;
+  background-color: #7974A5;
+}
+
+#selectedTab {
+  background-color: #615C96;
+}
+
+#selectedTab:hover {
+  cursor: default;
+}
+
 #modalBackDrop {
   display: none;
   top: 0px;
   left: 0px;
   z-index: 10;
   width: 100vw;
-  height: 500vh;
-  position: absolute;
+  height: 100%;
+  position: fixed;
   background-color: rgba(0,0,0,0.8);
 }
 

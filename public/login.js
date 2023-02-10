@@ -33,10 +33,28 @@ async function handle_login() {
 		const getRes = await fetch('/api/validate_user', postOptions);
 		const getResult = await getRes.json();
 		if (getResult != null && getResult != undefined) {
+			let getPermsResults = await getUserPermissions(getResult);
+			if (getPermsResults != null && getPermsResults != undefined && !getPermsResults.hasOwnProperty('status')) {
+				localStorage.setItem('userPermissions', JSON.stringify(getPermsResults));
+			}
 			localStorage.setItem("currentlyLoggedIn", JSON.stringify(getResult));
 			window.open('index.html', '_self');
 		} else {
 			alert('Invalid Username or Password');
 		}
 	}
+}
+
+async function getUserPermissions(user) {
+	const postOptions = {
+		method: 'POST', 
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(user)
+	};
+
+	const getPerms = await fetch('/api/get_userPermissions', postOptions);
+	const getPermsResults = await getPerms.json();
+	return getPermsResults;
 }

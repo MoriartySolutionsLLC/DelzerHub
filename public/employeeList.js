@@ -1,4 +1,5 @@
 let empList = {};
+let permsList = {};
 const editUserModal = document.getElementById('editUserModal');
 const backDrop = document.getElementById('modalBackDrop');
 
@@ -48,9 +49,13 @@ async function on_open() {
 
 	}
 
+	const getPerms = await fetch('/api/get_allpermissions', getOptions);
+	const getPermResults = await getPerms.json();
+	permsList = getPermResults;
 }
 
 function openModal(empID){
+	window.scrollTo(0,0);
 	let pickedEmp;
 	for (let i = 0; i < empList.length; i++){
 		if (empID == empList[i]._id){
@@ -58,8 +63,14 @@ function openModal(empID){
 		}
 	}
 
+	document.getElementById('modalHeader').innerHTML = `${pickedEmp.firstname} ${pickedEmp.lastname}`
+
 	if (pickedEmp != null && pickedEmp != undefined) {
-		document.getElementById('updateBtn').addEventListener('click', () => updateEmp(pickedEmp));
+		let updateButton = document.getElementById('updateBtn');
+		btnRemoveEventListeners(updateButton);
+		document.getElementById('modalBackDrop').addEventListener('click', closeModal);
+		document.getElementById('permTab').addEventListener('click', () => permTabClicked(pickedEmp));
+		updateButton.addEventListener('click', () => updateEmp(pickedEmp));
     	document.getElementById('cancelBtn').addEventListener('click', () => closeModal());
 		document.getElementById('modalEmpName').value = `${pickedEmp.firstname} ${pickedEmp.lastname}`
       	document.getElementById('modalEmpEmail').value = pickedEmp.email;
@@ -72,10 +83,111 @@ function openModal(empID){
 	}
 }
 
+function permTabClicked(pickedEmp) {
+	let updateButton = document.getElementById('updateBtn');
+	btnRemoveEventListeners(updateButton);
+	let pickedEmpPermList;
+	btnRemoveEventListeners(document.getElementById('permTab'));
+	document.getElementById('edit_employee_form').style.display = 'none';
+	document.getElementById('selectedTab').setAttribute('id', 'infoTab');
+	document.getElementById('infoTab').addEventListener('click', () => infoTabClicker(pickedEmp));
+	document.getElementById('permTab').setAttribute('id', 'selectedTab');
+	document.getElementById('permissions_form').style.display = 'block';
+
+	for (let i = 0; i < permsList.length; i++){
+		if (pickedEmp._id == permsList[i]._id){
+			pickedEmpPermList = permsList[i];
+		}
+	}
+
+	if (pickedEmpPermList != null && pickedEmpPermList != undefined) {
+		document.getElementById('jobSchedulingCalendarViewPermCheckBox').checked = pickedEmpPermList.jobSchedulingCalendarView;
+		document.getElementById('dispatchCallInFormViewPermCheckBox').checked = pickedEmpPermList.dispatchCallInFormView;
+		document.getElementById('callInHubViewPermCheckBox').checked = pickedEmpPermList.callInHubView;
+		document.getElementById('transportingEquipmentFormPermCheckBox').checked = pickedEmpPermList.transportingEquipmentForm;
+		document.getElementById('employeeListViewPermCheckBox').checked = pickedEmpPermList.employeeListView;
+		document.getElementById('updateBtn').addEventListener('click', () => updatePerms(pickedEmp));			
+	} else {
+		let addPermButton = document.getElementById('updateBtn');
+		addPermButton.innerHTML = 'Add Permissions';
+		addPermButton.addEventListener('click', () => addPerms(pickedEmp));
+	}
+}
+
+function infoTabClicker(pickedEmp) {
+	let updateButton = document.getElementById('updateBtn');
+	btnRemoveEventListeners(updateButton);
+	btnRemoveEventListeners(document.getElementById('infoTab'));
+	document.getElementById('permissions_form').style.display = 'none';
+	document.getElementById('selectedTab').setAttribute('id', 'permTab');
+	document.getElementById('permTab').addEventListener('click', () => permTabClicked(pickedEmp));
+	document.getElementById('infoTab').setAttribute('id', 'selectedTab');
+	document.getElementById('edit_employee_form').style.display = 'block';
+	document.getElementById('updateBtn').addEventListener('click', () => updateEmp(pickedEmp));
+}
+
 function closeModal() {
 	editUserModal.style.display = 'none';
     backDrop.style.display = 'none';
-    on_open();
+    window.open('employeeList.html', '_self');
+}
+
+async function updatePerms(pickedEmp){
+	let jobSchedulingCalendarView = document.getElementById('jobSchedulingCalendarViewPermCheckBox').checked;
+	let dispatchCallInFormView = document.getElementById('dispatchCallInFormViewPermCheckBox').checked;
+	let callInHubView = document.getElementById('callInHubViewPermCheckBox').checked;
+	let transportingEquipmentForm = document.getElementById('transportingEquipmentFormPermCheckBox').checked;
+	let employeeListView = document.getElementById('employeeListViewPermCheckBox').checked;
+	let _id = pickedEmp._id;
+	let data = {_id, jobSchedulingCalendarView, dispatchCallInFormView, callInHubView, transportingEquipmentForm, employeeListView};
+
+	const postOptions = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data)
+	}
+
+	const addPerms = await fetch('/api/update_permissionsList', postOptions);
+	const addPermsResult = await addPerms.json();
+
+	if (addPermsResult == null || addPermsResult == undefined || addPermsResult.status == 'failure') {
+		alert('ERROR: An error has occured');
+		closeModal();
+	} else {
+		alert(`SUCCESS: You have successfully updated ${pickedEmp.firstname} ${pickedEmp.lastname}'s permissions.`);
+		closeModal();
+	}
+}
+
+async function addPerms(pickedEmp) {
+	let jobSchedulingCalendarView = document.getElementById('jobSchedulingCalendarViewPermCheckBox').checked;
+	let dispatchCallInFormView = document.getElementById('dispatchCallInFormViewPermCheckBox').checked;
+	let callInHubView = document.getElementById('callInHubViewPermCheckBox').checked;
+	let transportingEquipmentForm = document.getElementById('transportingEquipmentFormPermCheckBox').checked;
+	let employeeListView = document.getElementById('employeeListViewPermCheckBox').checked;
+	let _id = pickedEmp._id;
+	let data = {_id, jobSchedulingCalendarView, dispatchCallInFormView, callInHubView, transportingEquipmentForm, employeeListView};
+
+	const postOptions = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data)
+	}
+
+	const addPerms = await fetch('/api/add_permissionsList', postOptions);
+	const addPermsResult = await addPerms.json();
+
+	if (addPermsResult == null || addPermsResult == undefined || addPermsResult.status == 'failure') {
+		alert('ERROR: An error has occured');
+		closeModal();
+	} else {
+		alert(`SUCCESS: You have successfully added ${pickedEmp.firstname} ${pickedEmp.lastname}'s permissions.`);
+		closeModal();
+	}
 }
 
 async function updateEmp(pickedEmp) {
@@ -98,4 +210,9 @@ async function updateEmp(pickedEmp) {
 		console.log(`${pickedEmp.firstname} ${pickedEmp.lastname} was updated.`)
 	}
 	closeModal();
+}
+
+function btnRemoveEventListeners(button){
+	const clone = button.cloneNode(true);
+	button.parentNode.replaceChild(clone, button);
 }

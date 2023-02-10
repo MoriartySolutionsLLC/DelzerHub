@@ -150,7 +150,7 @@ function callInBlockBtnHandler(callIn) {
 
 			for (let i = 0; i < notesSplit.length; i++){
 				if (i < notesSplit.length - 1) {
-					notesString += `${notesSplit[i]}<br><br>`;
+					notesString += `${notesSplit[i]}<br><hr><br>`;
 				} else {
 					notesString += `${notesSplit[i]}<br>`
 				}

@@ -1,42 +1,73 @@
-let administrationView;
-let employeeListView;
+let jobSchedulingCalendarView;
+let dispatchCallInFormView;
+let callInHubView; 
+let transportingEquipmentForm;
+let employeeListView; 
 
 function checkPerm() {
-	let user = JSON.parse(localStorage.getItem('currentlyLoggedIn'));
+	let userPerms = JSON.parse(localStorage.getItem('userPermissions'));
 
-	if (user != null && user != undefined) {
-		if (user.firstname == 'Kian'){
-			employeeListView = true;
-			administrationView = true;
-		} else {
-			employeeListView = false;
-			administrationView = false;
-		}
-	} else {
+	if (userPerms == null || userPerms == undefined) {
+		jobSchedulingCalendarView = false;
+		dispatchCallInFormView = false;
+		callInHubView = false;
+		transportingEquipmentForm = false;
 		employeeListView = false;
-		administrationView = false;
+	} else {
+		jobSchedulingCalendarView = userPerms.jobSchedulingCalendarView;
+		dispatchCallInFormView = userPerms.dispatchCallInFormView;
+		callInHubView = userPerms.callInHubView;
+		transportingEquipmentForm = userPerms.transportingEquipmentForm;
+		employeeListView = userPerms.employeeListView;
 	}
 
-	administrationDropDownPerm()
-	employeeListPerm();
+	jobSchedulingCalendarViewPermFunc();
+	dispatchCallInFormViewPermFunc();
+	callInHubViewPermFunc();
+	transportingEquipmentFormPermFunc();
+	employeeListViewPermFunc();
 }
 
-function administrationDropDownPerm() {
-	let administrationDropDown = document.getElementById('adminstrationDropDown');
-	if (administrationView != true){
-		administrationDropDown.parentNode.removeChild(administrationDropDown);
-	} else {
-		administrationDropDown.style.visibility = 'visible';
+function jobSchedulingCalendarViewPermFunc() {
+	if (!jobSchedulingCalendarView) {
+		let jobSchedulingCalendarLink = document.getElementById('jobSchedulingCalendarLink');
+		jobSchedulingCalendarLink.setAttribute('href', '');
+		jobSchedulingCalendarLink.addEventListener('click', permAlert);
 	}
 }
 
-function employeeListPerm(){
-	let employeeListLink = document.getElementById('employeeListLink');
-	if (employeeListView == true){
-		employeeListLink.href = 'employeeList.html';
-	} else {
-		employeeListLink.addEventListener('click', () => {
-			alert('ALERT: Cannot access this page.\nContact your administrator to get the appropriate permissions.')
-		});
+function dispatchCallInFormViewPermFunc() {
+	if (!dispatchCallInFormView) {
+		let dispatchCallInLink = document.getElementById('dispatchCallInLink');
+		dispatchCallInLink.setAttribute('href', '');
+		dispatchCallInLink.addEventListener('click', permAlert);
 	}
+}
+
+function callInHubViewPermFunc() {
+	if (!callInHubView) {
+		let callInListLink = document.getElementById('callInListLink');
+		callInListLink.setAttribute('href', '');
+		callInListLink.addEventListener('click', permAlert);
+	}
+}
+
+function transportingEquipmentFormPermFunc() {
+	if (!transportingEquipmentForm) {
+		let transportingEquipmentLink = document.getElementById('transportingEquipmentLink');
+		transportingEquipmentLink.setAttribute('href', '');
+		transportingEquipmentLink.addEventListener('click', permAlert);
+	}
+}
+
+function employeeListViewPermFunc() {
+	if (!employeeListView) {
+		let employeeListLink = document.getElementById('employeeListLink');
+		employeeListLink.setAttribute('href', '');
+		employeeListLink.addEventListener('click', permAlert);
+	}
+}
+
+function permAlert() {
+	alert("ALERT: You do not have permission to access this content, contact your administrator for a further inquiry.");
 }

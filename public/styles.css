@@ -106,10 +106,6 @@ body {
   float: right;
 }
 
-#adminstrationDropDown {
-  visibility: hidden;
-}
-
 #active {
   background-color: #4B4788;
 }
