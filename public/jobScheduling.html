@@ -8,7 +8,7 @@
 				<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 		    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		</head>
-		<body onload="todays_date(); on_open(); load(); initButtons(); checkLogin(); checkPerm()">
+		<body onload="todays_date(); on_open(); load(); initButtons(); checkPerm()">
 
 		<header>
 			<div id="loginArea">
@@ -54,7 +54,7 @@
 					</div>
 
 					<div class="dropdown">
-						<button class="dropbtn" id='adminstrationDropDown'>Administration
+						<button class="dropbtn">Administration
 							<i class="fa fa-caret-down"></i>
 						</button>
 						<div class="dropdown-content">
@@ -167,52 +167,88 @@
 				<h2>Schedule a Job</h2>
 				<p>To schedule a job, fill out the form below<br><strong>***Make sure to enter all the required fields***</strong></p>
 				<br>
-				<form id="time_off_form">
-					<label for="customer name">Customer Name</label>
-					<input type="text" id="customer name" placeholder="*required">
-					<br><br>
-
-					<label for="job address">Job Address</label>
-					<input type="text" id="job address" placeholder="*required">
-					<br><br>
-          
-          <label for="contact name">Contact Name</label>
-          <input type="text" id="contact name" placeholder="*required">
-          <br><br>
-          
-          <label for="contact phone">Contact Phone</label>
-          <input type="text" id="contact phone" placeholder="*required">
-          <br><br>
-          
-          <label for="contact email">Contact Email</label>
-          <input type="email" id="contact email" placeholder="*required">
-          <br><br>
-
-					<label for="start date">Start Date</label>
-					<input type="date" id="start date">
-					&nbsp;&nbsp;
-					<label for="end date">End Date</label>
-					<input type="date" id="end date">
-					<br><br>
-          
-          <label for="job type">Job Type</label>
-          <select id="job type">
-            <option value="">default</option>
-            <option value="dirtbiz">Dirtbiz</option>
-            <option value="haulbiz">Haulbiz</option>
-            <option value="sealbiz">Sealbiz</option>
-            <option value="snowbiz">Snowbiz</option>
-            <option value="waterbiz">Waterbiz</option>
-          </select>
-          <br><br>
-					
-					<p><label for="description">Brief Description of Job</label></p>
-					<textarea id="description" rows="4" cols="50" placeholder="Enter a brief description of the job requested. *required"></textarea>
-					<br><br>
-					
-					<input class="submit" type="button" value="Submit" onclick="handle_submission()">
-				</form>
-				<hr>
+				<div class="addJobFormArea">
+					<div class="sidebysideBlock">
+						<div class="addJobArea">
+							<div class="addJobForm">
+								<form>
+									<div class="addJobBlock">
+										<div class="label">
+											<label for="customer name">Customer Name:</label>
+										</div>
+										<input type="text" id="customer name" placeholder="*required" class="input">
+									</div>
+									<div class="addJobBlock">
+										<div class="label">
+											<label for="job address">Job Address:</label>
+										</div>
+										<input type="text" id="job address" placeholder="*required" class="input">
+									</div>
+				          <div class="addJobBlock">
+				          	<div class="label">
+				          		<label for="contact name">Contact Name:</label>
+				          	</div>
+				          	<input type="text" id="contact name" placeholder="*required" class="input">
+				         	</div>
+				          <div class="addJobBlock">
+				          	<div class="label">
+				          		<label for="contact phone">Contact Phone:</label>
+				          	</div>
+				         	 	<input type="text" id="contact phone" placeholder="*required" class="input">
+				          </div>
+				        </form>
+				      </div>
+				     </div>
+				     <div class="addJobArea">
+				      <div class="addJobForm">
+				      	<form>
+				      		<div class="addJobBlock">
+				        		<div class="label">
+				          		<label for="contact email">Contact Email:</label>
+				          	</div>
+				          	<input type="email" id="contact email" placeholder="*required" class="input">
+				          </div>
+				          <div class="sidebysideBlock">
+				          	<div class="addJobBlock">
+				          		<div class="label">
+												<label for="start date">Start Date:</label>
+											</div>
+											<input type="date" id="start date" class="input">
+										</div>
+										<div class="addJobBlock">
+											<div class="label">
+												<label for="end date">End Date:</label>
+											</div>
+											<input type="date" id="end date" class="input">
+										</div>
+									</div>
+				          <div class="addJobBlock">
+				          	<div class="label">
+				          		<label for="job type">Job Type:</label>
+				          	</div>
+					          <select id="job type" class="input">
+					            <option value="">default</option>
+					            <option value="dirtbiz">Dirtbiz</option>
+					            <option value="haulbiz">Haulbiz</option>
+					            <option value="sealbiz">Sealbiz</option>
+					            <option value="snowbiz">Snowbiz</option>
+					            <option value="waterbiz">Waterbiz</option>
+					          </select>
+					        </div>
+									<div class="addJobBlock">
+										<div class="label">
+											<label for="description">Brief Description of Job:</label>
+										</div>
+										<textarea id="description" rows="1" cols="50" placeholder="Enter a brief description. *required" class="input"></textarea>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<form class="submitBlock">
+						<input class="submit" type="button" value="Submit" onclick="handle_submission()">
+					</form>
+				</div>
 			</section>
 		</main>		
 		<script src="https://smtpjs.com/v3/smtp.js"></script>

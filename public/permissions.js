@@ -8,24 +8,25 @@ function checkPerm() {
 	let userPerms = JSON.parse(localStorage.getItem('userPermissions'));
 
 	if (userPerms == null || userPerms == undefined) {
-		jobSchedulingCalendarView = false;
-		dispatchCallInFormView = false;
-		callInHubView = false;
-		transportingEquipmentForm = false;
-		employeeListView = false;
+		document.getElementById("timeOffCalendarLink").setAttribute("href", "login.html");
+		document.getElementById("jobSchedulingCalendarLink").setAttribute("href", "login.html");
+		document.getElementById("dispatchCallInLink").setAttribute("href", "login.html");
+		document.getElementById("purchaseOrdersLink").setAttribute("href", "login.html");
+		document.getElementById("callInListLink").setAttribute("href", "login.html");
+		document.getElementById("transportingEquipmentLink").setAttribute("href", "login.html");
+		document.getElementById("employeeListLink").setAttribute("href", "login.html");
 	} else {
 		jobSchedulingCalendarView = userPerms.jobSchedulingCalendarView;
 		dispatchCallInFormView = userPerms.dispatchCallInFormView;
 		callInHubView = userPerms.callInHubView;
 		transportingEquipmentForm = userPerms.transportingEquipmentForm;
 		employeeListView = userPerms.employeeListView;
+		jobSchedulingCalendarViewPermFunc();
+		dispatchCallInFormViewPermFunc();
+		callInHubViewPermFunc();
+		transportingEquipmentFormPermFunc();
+		employeeListViewPermFunc();
 	}
-
-	jobSchedulingCalendarViewPermFunc();
-	dispatchCallInFormViewPermFunc();
-	callInHubViewPermFunc();
-	transportingEquipmentFormPermFunc();
-	employeeListViewPermFunc();
 }
 
 function jobSchedulingCalendarViewPermFunc() {

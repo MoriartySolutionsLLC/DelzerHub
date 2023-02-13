@@ -1,5 +1,6 @@
 async function on_open() {
 	localStorage.removeItem("currentlyLoggedIn");
+	localStorage.removeItem("userPermissions");
 	document.getElementById('loginBtn').addEventListener('click', () => handle_login());
 
 	// creates the options for the get api request

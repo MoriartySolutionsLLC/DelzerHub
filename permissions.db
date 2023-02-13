@@ -1,2 +1,2 @@
 {"_id":"1758971","jobSchedulingCalendarView":false,"dispatchCallInFormView":true,"callInHubView":false,"transportingEquipmentForm":true,"employeeListView":false}
-{"_id":"2941000","jobSchedulingCalendarView":false,"dispatchCallInFormView":true,"callInHubView":true,"transportingEquipmentForm":true,"employeeListView":true}
+{"_id":"2941000","jobSchedulingCalendarView":true,"dispatchCallInFormView":true,"callInHubView":true,"transportingEquipmentForm":true,"employeeListView":true}

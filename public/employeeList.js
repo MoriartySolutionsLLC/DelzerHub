@@ -116,6 +116,7 @@ function permTabClicked(pickedEmp) {
 
 function infoTabClicker(pickedEmp) {
 	let updateButton = document.getElementById('updateBtn');
+	updateBtn.innerHTML = 'Update';
 	btnRemoveEventListeners(updateButton);
 	btnRemoveEventListeners(document.getElementById('infoTab'));
 	document.getElementById('permissions_form').style.display = 'none';

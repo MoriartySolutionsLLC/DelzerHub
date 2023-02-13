@@ -8,7 +8,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
-	<body onload="todays_date(); on_open(); load(); initButtons(); checkLogin(); checkPerm()">
+	<body onload="todays_date(); on_open(); load(); initButtons(); checkPerm()">
 
 	<header>
 				<div id="loginArea">
@@ -140,22 +140,33 @@
 				<h2>Request Time Off</h2>
 				<p>To request time off, fill out the form below<br><strong>***REMEMBER: This is a request. A supervisor must approve this before you can take off!***</strong></p>
 				<br>
-				<form id="time_off_form">
-
-					<label for="start date">Start Date</label>
-					<input type="date" id="start date">
-					&nbsp;&nbsp;
-					<label for="end date">End Date</label>
-					<input type="date" id="end date">
-					<br><br>
-					
-					<p><label for="reason">Reason For Request</label></p>
-					<textarea id="reason" rows="4" cols="50" placeholder="Enter the reason for the time off request. *required"></textarea>
-					<br><br>
-					
-					<input class="submit" type="button" value="Submit" onclick="handle_submission()">
-				</form>
-				<hr>
+				<div class="timeOffForm">
+					<form id="time_off_form">
+						<div class="sidebysideBlock">
+							<div class="addTimeOffBlock">
+								<div class="label">
+									<label for="start date">Start Date:</label>
+								</div>
+								<input type="date" id="start date" class="input">
+							</div>
+							<div class="addTimeOffBlock">
+								<div class="label">
+									<label for="end date">End Date:</label>
+								</div>
+								<input type="date" id="end date" class="input">
+							</div>
+						</div>	
+						<div class="addTimeOffBlock">
+							<div class="label">
+								<label for="reason">Reason For Request:</label>
+							</div>
+							<textarea id="reason" rows="4" cols="50" placeholder="Enter the reason for the time off request. *required" class="input"></textarea>
+						</div>
+						<div class="submitBlock">
+							<input class="submit" type="button" value="Submit" onclick="handle_submission()">
+						</div>
+					</form>
+				</div>
 			</section>
 		</main>
 		
