@@ -46,7 +46,7 @@ async function updateUsername() {
 			}
 
 			const getUser = await fetch('/api/validate_user', postOptions);
-			const getUserInfo = await getVal.json();
+			const getUserInfo = await getUser.json();
 			localStorage.removeItem("currentlyLoggedIn");
 			localStorage.setItem("currentlyLoggedIn", JSON.stringify(getUserInfo));
 			location.reload();
@@ -80,7 +80,7 @@ async function updatePassword() {
 		const getValid = await getVal.json();
 
 		if (getValid != null || getValid != undefined){
-			let data = {'tsheetsid': user.tsheetsid, 'password': newPassword};
+			let data = {'tsheetsid': user.tsheetsid, 'firstname': user.firstname, 'lastname': user.lastname,'password': newPassword};
 			const postOptions = {
 				method: 'POST', 
 				headers: {

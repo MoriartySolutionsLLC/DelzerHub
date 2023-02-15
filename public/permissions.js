@@ -3,9 +3,10 @@ let dispatchCallInFormView;
 let callInHubView; 
 let transportingEquipmentForm;
 let employeeListView; 
+let userPerms;
 
 function checkPerm() {
-	let userPerms = JSON.parse(localStorage.getItem('userPermissions'));
+	userPerms = JSON.parse(localStorage.getItem('userPermissions'));
 
 	if (userPerms == null || userPerms == undefined) {
 		document.getElementById("timeOffCalendarLink").setAttribute("href", "login.html");
@@ -16,53 +17,48 @@ function checkPerm() {
 		document.getElementById("transportingEquipmentLink").setAttribute("href", "login.html");
 		document.getElementById("employeeListLink").setAttribute("href", "login.html");
 	} else {
-		jobSchedulingCalendarView = userPerms.jobSchedulingCalendarView;
-		dispatchCallInFormView = userPerms.dispatchCallInFormView;
-		callInHubView = userPerms.callInHubView;
-		transportingEquipmentForm = userPerms.transportingEquipmentForm;
-		employeeListView = userPerms.employeeListView;
-		jobSchedulingCalendarViewPermFunc();
-		dispatchCallInFormViewPermFunc();
-		callInHubViewPermFunc();
-		transportingEquipmentFormPermFunc();
-		employeeListViewPermFunc();
+		jobSchedulingCalendarPermFunc();
+		dispatchCallInFormPermFunc();
+		callInHubPermFunc();
+		transportingEquipmentPermFunc();
+		employeeListPermFunc();
 	}
 }
 
-function jobSchedulingCalendarViewPermFunc() {
-	if (!jobSchedulingCalendarView) {
+function jobSchedulingCalendarPermFunc() {
+	if (!userPerms.jobSchedulingCalendarView) {
 		let jobSchedulingCalendarLink = document.getElementById('jobSchedulingCalendarLink');
 		jobSchedulingCalendarLink.setAttribute('href', '');
 		jobSchedulingCalendarLink.addEventListener('click', permAlert);
 	}
 }
 
-function dispatchCallInFormViewPermFunc() {
-	if (!dispatchCallInFormView) {
+function dispatchCallInFormPermFunc() {
+	if (!userPerms.dispatchCallInFormView) {
 		let dispatchCallInLink = document.getElementById('dispatchCallInLink');
 		dispatchCallInLink.setAttribute('href', '');
 		dispatchCallInLink.addEventListener('click', permAlert);
 	}
 }
 
-function callInHubViewPermFunc() {
-	if (!callInHubView) {
+function callInHubPermFunc() {
+	if (!userPerms.callInHubView) {
 		let callInListLink = document.getElementById('callInListLink');
 		callInListLink.setAttribute('href', '');
 		callInListLink.addEventListener('click', permAlert);
 	}
 }
 
-function transportingEquipmentFormPermFunc() {
-	if (!transportingEquipmentForm) {
+function transportingEquipmentPermFunc() {
+	if (!userPerms.transportingEquipmentForm) {
 		let transportingEquipmentLink = document.getElementById('transportingEquipmentLink');
 		transportingEquipmentLink.setAttribute('href', '');
 		transportingEquipmentLink.addEventListener('click', permAlert);
 	}
 }
 
-function employeeListViewPermFunc() {
-	if (!employeeListView) {
+function employeeListPermFunc() {
+	if (!userPerms.employeeListView) {
 		let employeeListLink = document.getElementById('employeeListLink');
 		employeeListLink.setAttribute('href', '');
 		employeeListLink.addEventListener('click', permAlert);

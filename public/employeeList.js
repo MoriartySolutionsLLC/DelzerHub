@@ -2,9 +2,10 @@ let empList = {};
 let permsList = {};
 const editUserModal = document.getElementById('editUserModal');
 const backDrop = document.getElementById('modalBackDrop');
+let user;
 
 async function on_open() {
-	let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+	user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
 	if (user != null){
 	    document.getElementById('loginBtn').textContent = "Logout";
 	    let userSettings = document.createElement('a');
@@ -70,12 +71,12 @@ function openModal(empID){
 		btnRemoveEventListeners(updateButton);
 		document.getElementById('modalBackDrop').addEventListener('click', closeModal);
 		document.getElementById('permTab').addEventListener('click', () => permTabClicked(pickedEmp));
-		updateButton.addEventListener('click', () => updateEmp(pickedEmp));
     	document.getElementById('cancelBtn').addEventListener('click', () => closeModal());
 		document.getElementById('modalEmpName').value = `${pickedEmp.firstname} ${pickedEmp.lastname}`
       	document.getElementById('modalEmpEmail').value = pickedEmp.email;
       	document.getElementById('modalEmpWorkEmail').value = pickedEmp.workemail;
       	document.getElementById('modalEmpNumber').value = pickedEmp.number;
+		document.getElementById('updateBtn').addEventListener('click', () => updateEmp(pickedEmp));
       	editUserModal.style.display = 'block';
       	backDrop.style.display = 'block';
 	} else {
@@ -101,6 +102,7 @@ function permTabClicked(pickedEmp) {
 	}
 
 	if (pickedEmpPermList != null && pickedEmpPermList != undefined) {
+		document.getElementById('approveTimeOffPermCheckBox').checked = pickedEmpPermList.approveTimeOff;
 		document.getElementById('jobSchedulingCalendarViewPermCheckBox').checked = pickedEmpPermList.jobSchedulingCalendarView;
 		document.getElementById('dispatchCallInFormViewPermCheckBox').checked = pickedEmpPermList.dispatchCallInFormView;
 		document.getElementById('callInHubViewPermCheckBox').checked = pickedEmpPermList.callInHubView;
@@ -134,13 +136,19 @@ function closeModal() {
 }
 
 async function updatePerms(pickedEmp){
+	let userID = user.tsheetsid;
+	let userFirstname = user.firstname;
+	let userLastname = user.lastname;
+	let approveTimeOff = document.getElementById('approveTimeOffPermCheckBox').checked;
 	let jobSchedulingCalendarView = document.getElementById('jobSchedulingCalendarViewPermCheckBox').checked;
 	let dispatchCallInFormView = document.getElementById('dispatchCallInFormViewPermCheckBox').checked;
 	let callInHubView = document.getElementById('callInHubViewPermCheckBox').checked;
 	let transportingEquipmentForm = document.getElementById('transportingEquipmentFormPermCheckBox').checked;
 	let employeeListView = document.getElementById('employeeListViewPermCheckBox').checked;
 	let _id = pickedEmp._id;
-	let data = {_id, jobSchedulingCalendarView, dispatchCallInFormView, callInHubView, transportingEquipmentForm, employeeListView};
+	let empFirstname = pickedEmp.firstname;
+	let empLastname = pickedEmp.lastname;
+	let data = {_id, userID, userFirstname, userLastname, empFirstname, empLastname, approveTimeOff, jobSchedulingCalendarView, dispatchCallInFormView, callInHubView, transportingEquipmentForm, employeeListView};
 
 	const postOptions = {
 		method: 'POST',
@@ -163,13 +171,19 @@ async function updatePerms(pickedEmp){
 }
 
 async function addPerms(pickedEmp) {
+	let userID = user.tsheetsid;
+	let userFirstname = user.firstname;
+	let userLastname = user.lastname;
+	let empFirstname = pickedEmp.firstname;
+	let empLastname = pickedEmp.lastname;
+	let approveTimeOff = document.getElementById('approveTimeOffPermCheckBox').checked;
 	let jobSchedulingCalendarView = document.getElementById('jobSchedulingCalendarViewPermCheckBox').checked;
 	let dispatchCallInFormView = document.getElementById('dispatchCallInFormViewPermCheckBox').checked;
 	let callInHubView = document.getElementById('callInHubViewPermCheckBox').checked;
 	let transportingEquipmentForm = document.getElementById('transportingEquipmentFormPermCheckBox').checked;
 	let employeeListView = document.getElementById('employeeListViewPermCheckBox').checked;
 	let _id = pickedEmp._id;
-	let data = {_id, jobSchedulingCalendarView, dispatchCallInFormView, callInHubView, transportingEquipmentForm, employeeListView};
+	let data = {_id, userID, userFirstname, userLastname, empFirstname, empLastname, approveTimeOff, jobSchedulingCalendarView, dispatchCallInFormView, callInHubView, transportingEquipmentForm, employeeListView};
 
 	const postOptions = {
 		method: 'POST',
@@ -192,14 +206,21 @@ async function addPerms(pickedEmp) {
 }
 
 async function updateEmp(pickedEmp) {
-	pickedEmp.workemail = document.getElementById('modalEmpWorkEmail').value;
+	let userID = user.tsheetsid;
+	let userFirstname = user.firstname;
+	let userLastname = user.lastname;
+	let empFirstname = pickedEmp.firstname;
+	let empLastname = pickedEmp.lastname;
+	let _id = pickedEmp._id;
+	let workemail = document.getElementById('modalEmpWorkEmail').value;
+	let data = {userID, userFirstname, userLastname, empFirstname, empLastname, _id, workemail};
 
 	const postOptions = {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify(pickedEmp)
+		body: JSON.stringify(data)
 	}
 
 	const updateRes = await fetch('/api/update_user_info', postOptions);

@@ -15,10 +15,11 @@ const calendar = document.getElementById('calendar');
 const deleteEventModal = document.getElementById('deleteEventModal');
 const backDrop = document.getElementById('modalBackDrop');
 let events = {};
+let user;
 
 // asynchronous function to get employee information on the open of the webpage
 async function on_open(){
-  let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
   if (user != null){
     document.getElementById('loginBtn').textContent = "Logout";
     let userSettings = document.createElement('a');
@@ -42,9 +43,7 @@ async function on_open(){
 }
 
 // asynchronous function to validate the form submission and send the information to the webserver
-async function handle_submission(){	
-
-  let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+async function handle_submission(){
   if (user == null) {
     alert("Please login before submitting a request");
     window.open('login.html', '_self');
@@ -284,19 +283,18 @@ function load() {
 }
 
 function openModal(startDate, endDate, tsheetsid){
-    let user = JSON.parse(localStorage.getItem("currentlyLoggedIn")); 
+    let userPerms = JSON.parse(localStorage.getItem("userPermissions")); 
   	const eventForDay = events.find(e => e.tsheetsid === tsheetsid && e.endDate === endDate && e.startDate === startDate);
-    document.getElementById('deleteButton').addEventListener('click', () => deleteEntry(eventForDay.tsheetsid, eventForDay.ID));
+    document.getElementById('deleteButton').addEventListener('click', () => deleteEntry(eventForDay.tsheetsid, eventForDay.ID, eventForDay.startDate, eventForDay.endDate));
     document.getElementById('updateButton').addEventListener('click', () => updateEntry(eventForDay.tsheetsid, eventForDay.ID));
   	if (eventForDay) {
       let approvalBtn = document.getElementById('approvalBtn');
       if (eventForDay.approved == 'true'){
         approvalBtn.innerHTML = 'Approved';
       }
-      if (user.firstname == "John" && user.lastname == "Delzer" || user.firstname == "Kian"  && user.lastname == "Moriarty"){
+      if (userPerms.approveTimeOff){
         approvalBtn.addEventListener('click', () => approveEntry(eventForDay.approved, eventForDay.ID));
       } else {
-        console.log('disabled')
         approvalBtn.disabled = true;
       }
 
@@ -348,13 +346,14 @@ async function updateEntry(tsheetsid, dbId){
   }
 }
 
-async function deleteEntry(tsheetsid, dbId){
-  const user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+async function deleteEntry(tsheetsid, dbId, startDate, endDate){
+  let firstname = user.firstname;
+  let lastname = user.lastname;
   if (tsheetsid == user.tsheetsid){
     let confirmation = confirm('Are you sure you want to delete this entry?');
     if (confirmation){
       // creates an object with the id to delete 
-      const data = {tsheetsid, dbId};
+      const data = {tsheetsid, dbId, firstname, lastname, startDate, endDate};
       // creates post options for the api request
       const postOptions = {
         method: 'POST',
@@ -375,14 +374,14 @@ async function deleteEntry(tsheetsid, dbId){
 
 async function approveEntry(approved, dbId) {
   const user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
-  let newApproved;
   let confirmation;
+  console.log(approved);
   if (approved == 'false') {
     confirmation = confirm('Are you sure you want to approve this entry?');
-    newApproved = 'true';
+    approved = 'true';
   } else {
     confirmation = confirm('Are you sure you want to unapprove this entry?');
-    newApproved = 'false';
+    approved = 'false';
   }
 
   let firstname = user.firstname;
@@ -390,7 +389,7 @@ async function approveEntry(approved, dbId) {
 
   if (confirmation){
     // creates an object with the id to delete 
-    const data = {firstname, lastname, newApproved, dbId};
+    const data = {firstname, lastname, approved, dbId};
     // creates post options for the api request
     const postOptions = {
       method: 'POST',

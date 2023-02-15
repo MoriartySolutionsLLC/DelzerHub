@@ -90,12 +90,11 @@ function main(){
 			if (doc == null || doc == undefined) {
 				userDB.update({_id: `${data.tsheetsid}`}, {$set: {username: `${data.username}`}}, {}, function(err, numReplaced){
 					if(err) throw new Error(err);
-					console.log(`${data.firstname} ${data.lastname} updated their username to ${data.username}.`)
+					logActivity('User Edit', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} updated their username to ${data.username}`);
 				});
 				res.json({
-			      status:'success'
-			      
-		    	});
+			    status:'success'
+		    });
 
 		    } else {
 		    	res.json({
@@ -113,7 +112,7 @@ function main(){
    			bcrypt.hash(data.password, salt, function(err, hash) {
    				userDB.update({_id: `${data.tsheetsid}`}, {$set: {password: `${hash}`}}, {}, function(err, numReplaced){
    					if (err) throw new Error(err);
-
+   					logActivity('User Edit', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} has updated there password.`);
  						res.json({
 				      status:'success'
 			    	});
@@ -124,10 +123,6 @@ function main(){
 	});
 
 	/*EMPLOYEE LIST API REQUESTS*/ 
-	app.post('/api/update_user_permission', (req, res) => {
-		//TODO
-	});
-
 	app.post('/api/update_user_info', (req, res) => {
 		userDB.loadDatabase();
 		const data = req.body;
@@ -139,6 +134,7 @@ function main(){
 				});
 				throw new Error(err);
 			};
+			logActivity('Employee List', `${data.userID}`, `${data.userFirstname} ${data.userLastname} has updated ${data.empFirstname} ${data.empLastname}'s work email to ${data.workemail}`);
 			res.json({
 				status:'success'
 			});
@@ -160,9 +156,9 @@ function main(){
 
 	app.post('/api/add_permissionsList', (req, res) => {
 		const data = req.body;
-		console.log('adding permissions')
 		try {
 			permissionsDB.insert(data);
+			activityLogDB('Employee List', `${data.userID}`, `${data.userFirstname} ${data.userLastname} updated ${data.empFirstname} ${data.empLastname}'s permissions.`)
 			res.json({
 				status: 'success'
 			})
@@ -176,9 +172,9 @@ function main(){
 	app.post('/api/update_permissionsList', (req, res) => {
 		permissionsDB.loadDatabase();
 		const data = req.body;
-		console.log(data)
 		try {
-			permissionsDB.update({_id: `${data._id}`}, {$set: { jobSchedulingCalendarView: data.jobSchedulingCalendarView, dispatchCallInFormView: data.dispatchCallInFormView, callInHubView: data.callInHubView, transportingEquipmentForm: data.transportingEquipmentForm, employeeListView: data.employeeListView}})
+			permissionsDB.update({_id: `${data._id}`}, {$set: { approveTimeOff: data.approveTimeOff, jobSchedulingCalendarView: data.jobSchedulingCalendarView, dispatchCallInFormView: data.dispatchCallInFormView, callInHubView: data.callInHubView, transportingEquipmentForm: data.transportingEquipmentForm, employeeListView: data.employeeListView}})
+			activityLogDB('Employee List', `${data.userID}`, `${data.userFirstname} ${data.userLastname} updated ${data.empFirstname} ${data.empLastname}'s permissions`);
 			res.json({
 				status: 'success'
 			})
@@ -189,7 +185,7 @@ function main(){
 		}
 	})
 
-	/*THESE API REQUESTS ARE FOR TIME OFF CALENDAR*/
+	/*TIME OFF CALENDAR API REQUESTS*/
 	app.get('/api/eventData_time_off_calendar', (req, res) =>{
 		getTimeOffData(data =>{
 			res.end(JSON.stringify(data));
@@ -205,17 +201,14 @@ function main(){
 		// Runs the tsheets request function to send request to tsheets
 		sendTsheetsRequest(data);
 
+		// information for emails
 		let title = `${data.firstname} ${data.lastname} requests this time off`;
 		let title2 = `Thank you for your time off request`;
-
-		// creates the content for the email to managers
 		let content1 = `${data.firstname} ${data.lastname} has submitted a request to take time off from ${data.startDate} to ${data.endDate}\nHis reason is: ${data.reason}\n`;
+		let content2 = `Thank you ${data.firstname} ${data.lastname}, your request has successfully been submitted.\n\n${data.startDate} to ${data.endDate}\nReason:\n${data.reason}`;
 
 		// Runs the function to send an email to the managers
 		//sendEmail('kian.moriarty@delzerbiz.com, john@delzerbiz.com, jim@delzerbiz.com', title, content1);
-
-		// creates the content for the user response
-		let content2 = `Thank you ${data.firstname} ${data.lastname}, your request has successfully been submitted.\n\n${data.startDate} to ${data.endDate}\nReason:\n${data.reason}`;
 
 		userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc) {
 			if (err) throw new Error(err);
@@ -223,6 +216,7 @@ function main(){
 			sendEmail(doc.email, title2, content2);
 		});
 
+		logActivity('Time Off Calendar', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} has submitted a request to take time off from ${data.startDate} to ${data.endDate}.`);
 
 		res.json({
 			status: 'success',
@@ -235,15 +229,20 @@ function main(){
   		timeOffDB.loadDatabase();
     	const data = req.body;
     	const timestamp = Date.now();
+
+    let title = `${data.firstname} ${data.lastname} has deleted there request for time off.`;
+		let title2 = `Your request for time off was successfully deleted.`;
+		let content1 = `${data.firstname} ${data.lastname} has deleted their request to take time off from ${data.startDate} to ${data.endDate}`;
+		let content2 = `Thank you ${data.firstname} ${data.lastname}, your request has successfully been deleted.\n\n${data.startDate} to ${data.endDate}`;
     
     	timeOffDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
     		if (err) throw new Error(err);
-      		console.log(`${data.dbId} was deleted`);
-    	});
-    
-    	res.json({
+    		logActivity('Time Off Calendar', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} has deleted their time off request from ${startDate} to ${endDate}.`)
+    		sendEmail
+    		res.json({
       		status:'success',
-    		timestamp: timestamp
+    			timestamp: timestamp
+    		});
     	});
   	});
   
@@ -266,14 +265,14 @@ function main(){
 		timeOffDB.loadDatabase();
     const data = req.body;
 
-    timeOffDB.update({_id: `${data.dbId}`}, {$set: { approved: `${data.newApproved}`}}, {}, function(err, numReplaced){
+    timeOffDB.update({_id: `${data.dbId}`}, {$set: { approved: `${data.approved}`}}, {}, function(err, numReplaced){
     	if (err) throw new Error(err);
     	timeOffDB.findOne({_id: `${data.dbId}`}, function(errr, doc){
     		if (errr) throw new Error(errr);
     		userDB.findOne({_id: `${doc.tsheetsid}`}, function(error, user){
     			if (error) throw new Error(error);
-
-    			let approved
+    			console.log(data.approved);
+    			let approved;
     			if (data.approved == 'true'){
     				approved = 'approved';
     			} else {
@@ -292,7 +291,7 @@ function main(){
 		});
   });
 
-	/*THESE API REQUESTS ARE FOR JOB SCHEDULING WEB PAGE*/
+	/*JOB SCHEDULING WEB PAGE API REQUESTS*/
 	app.get('/api/eventData_job_scheduling', (req, res) =>{
 		getJobSchedulingData(data =>{
 			res.end(JSON.stringify(data));
@@ -343,7 +342,6 @@ function main(){
     
     	jobSchedulingDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
     		if (err) throw new Error(err);
-      		console.log(`${data.dbId} was deleted`);
     	});
     
     	res.json({
@@ -358,7 +356,7 @@ function main(){
 	    const timestamp = Date.now();
     
     	jobSchedulingDB.update({ _id: `${data.dbId}` }, { $set: { startDate: `${data.startDate}`, endDate: `${data.endDate}`, jobType: `${data.jobType}`, description: `${data.description}`}}, {}, function(err, numReplaced){
-      		console.log(`${data.dbId} was updated.`)
+    		if (err) throw new Error(err);
     	})
     
     	res.json({
@@ -490,6 +488,18 @@ function main(){
 }
 
 /*UNIVERSAL FUCNTIONS*/
+//Function to log activity
+function logActivity(tabName, userID, description) {
+	const currentDate = new Date();
+	let timestamp = currentDate.getTime();
+	let date = currentDate.toLocaleDateString();
+	const Datastore = require('nedb');
+	const activityLogDB = new Datastore('activityLog.db');
+	activityLogDB.loadDatabase();
+	const data = {tabName, userID, description, date, timestamp};
+	activityLogDB.insert(data);
+}
+
 // Function to send email
 function sendEmail(to, title, content){
 
