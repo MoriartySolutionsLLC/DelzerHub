@@ -373,7 +373,6 @@ async function deleteEntry(tsheetsid, dbId, startDate, endDate){
 }
 
 async function approveEntry(approved, dbId) {
-  const user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
   let confirmation;
   console.log(approved);
   if (approved == 'false') {

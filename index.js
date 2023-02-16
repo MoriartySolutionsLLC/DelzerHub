@@ -3,6 +3,8 @@ let employeeList = {};
 // Initialize eventData list object
 let eventData = {};
 
+const MANAGER_EMAILS = 'kian.moriarty@delzerbiz.com,john@delzerbiz.com,jim@delzerbiz.com';
+
 main();
 
 function main(){
@@ -208,7 +210,7 @@ function main(){
 		let content2 = `Thank you ${data.firstname} ${data.lastname}, your request has successfully been submitted.\n\n${data.startDate} to ${data.endDate}\nReason:\n${data.reason}`;
 
 		// Runs the function to send an email to the managers
-		//sendEmail('kian.moriarty@delzerbiz.com, john@delzerbiz.com, jim@delzerbiz.com', title, content1);
+		//sendEmail(MANAGER_EMAILS, title, content1);
 
 		userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc) {
 			if (err) throw new Error(err);
@@ -238,7 +240,16 @@ function main(){
     	timeOffDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
     		if (err) throw new Error(err);
     		logActivity('Time Off Calendar', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} has deleted their time off request from ${startDate} to ${endDate}.`)
-    		sendEmail
+    		userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc) {
+    			if (err) {
+    				res.json({
+    					status: 'failure'
+    				});
+    				throw new Error(err);
+    			};
+    			sendEmail(doc.email, title2, content2);
+    		})
+    		//sendEmail(MANAGER_EMAILS, title1, content1);
     		res.json({
       		status:'success',
     			timestamp: timestamp
@@ -250,11 +261,30 @@ function main(){
 		timeOffDB.loadDatabase();
     const data = req.body;
     const timestamp = Date.now();
+
+    let title = `${data.firstname} ${data.lastname} has updated there request for time off.`;
+		let title2 = `Your request for time off was successfully updated.`;
+		let content1 = `${data.firstname} ${data.lastname} has updated their request to take time off from ${data.startDate} to ${data.endDate}`;
+		let content2 = `Thank you ${data.firstname} ${data.lastname}, your request has successfully been updated.\n\n${data.startDate} to ${data.endDate}`;
     
     timeOffDB.update({ _id: `${data.dbId}` }, { $set: { startDate: `${data.startDate}`, endDate: `${data.endDate}`, reason: `${data.reason}`}}, {}, function(err, numReplaced){
-      console.log(`${data.dbId} was updated.`)
+      if (err) {
+      	res.json({
+      		status: 'failure';
+      	});
+      	throw new Error(err);
+      };
+      userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc) {
+      	if (err) {
+      		res.json({
+      			status: 'failure'
+      		});
+      		throw new Error(err);
+      	};
+      	sendEmail(doc.email, title2, content2);
+      });
     })
-  
+  	//sendEmail('kian.moriarty@delzerbiz.com, john@delzerbiz.com, jim@delzerbiz.com', title1, content1);
     res.json({
       status:'success',
       timestamp: timestamp
@@ -271,21 +301,22 @@ function main(){
     		if (errr) throw new Error(errr);
     		userDB.findOne({_id: `${doc.tsheetsid}`}, function(error, user){
     			if (error) throw new Error(error);
-    			console.log(data.approved);
     			let approved;
     			if (data.approved == 'true'){
     				approved = 'approved';
     			} else {
     				approved = 'unapproved';
     			}
-
     			let title = `${data.firstname} ${data.lastname} has ${approved} your time off request.`;
     			let content = `Your request to leave from ${doc.startDate} to ${doc.endDate} was ${approved}.`;
     			sendEmail(user.email, title, content);
+    			logActivity('Time Off Calendar', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} has ${approved} ${user.firstname} ${user.lastname}'s time off request from ${doc.startDate} ${doc.endDate}.`);
+			    let title1 = `${data.firstname} ${data.lastname} has ${approved} ${user.firstname} ${user.lastname}'s time off reques`;
+			    let content1 = `${data.firstname} ${data.lastname} has ${approved} ${user.firstname} ${user.lastname}'s time off request from ${doc.startDate} ${doc.endDate}.`;
+			    //sendEmail(MANAGER_EMAILS, title1, content1);
     		})
     	})
 		});
-
 		res.json({
 			status:'success'
 		});
@@ -314,10 +345,12 @@ function main(){
 		let content1 = `${data.empName} has scheduled a job from ${data.startDate} to ${data.endDate}\nThe job is for ${data.custName} at ${data.jobAddress}.\nBrief Description:\n${data.description}`;
 
 		// Runs the function to send an email to the managers
-		sendEmail('kian.moriarty@delzerbiz.com', title, content1);
+		//sendEmail(MANAGER_EMAILS, title, content1);
 
 		// creates the content for the user response
 		let content2 = `Thank you ${data.empName}, the job at ${data.jobAddress} for ${data.custName} has successfully been scheduled.`;
+
+		logActivity('Job Scheduling Calendar', `${data.tsheetsid}`, `${data.empName} has submitted a job for ${data.custName} for ${data.jobAddress} from ${data.startDate} to ${data.endDate}`)
 
 		userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc){
 			if (err) throw new Error(err);
@@ -340,10 +373,32 @@ function main(){
     	const data = req.body;
     	const timestamp = Date.now();
     
-    	jobSchedulingDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
-    		if (err) throw new Error(err);
+    	jobSchedulingDB.findOne({_id: `${data._id}`}, function(errr, doc) {
+    		if (err) {
+    			res.json({
+    				status: 'failure'
+    			});
+    			throw new Error(errr);
+    		}
+    		logActivity('Job Scheduling Calendar', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} deleted a job request for ${doc.custName} at ${doc.jobAddress} from ${doc.startDate} to ${doc.endDate}`);
+	    	let title1 = `${data.firstname} ${data.lastname} deleted a job that was scheduled`;
+	    	let content1 = `${data.firstname} ${data.lastname} deleted the job for ${data.custName} at ${data.jobAddress} from ${doc.startDate} to ${doc.endDate}.`;
+	    	//sendEmail(MANAGER_EMAILS, title1, content1);
+	    	let title2 = `The job for ${doc.custName} at ${doc.jobAddress} was successfully deleted.`;
+	    	let content2 = `Thank you ${data.firstname} ${data.lastname}. The job for ${custName} at ${jobAddress} from ${doc.startDate} to ${doc.endDate} has been successfully deleted.`;
+	    	userDB.findOne({_id: `${data.tsheetsid}`}, function(err, user) {
+	    		if (err) {
+	    			res.json({
+	    				status: 'failure'
+	    			});
+	    			throw new Error(err);
+	    		}
+	    		sendEmail(user.email, title2, content2);
+	    	});
+	    	jobSchedulingDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
+	    		if (err) throw new Error(err);
+	    	});
     	});
-    
     	res.json({
       		status:'success',
       		timestamp: timestamp
@@ -356,8 +411,30 @@ function main(){
 	    const timestamp = Date.now();
     
     	jobSchedulingDB.update({ _id: `${data.dbId}` }, { $set: { startDate: `${data.startDate}`, endDate: `${data.endDate}`, jobType: `${data.jobType}`, description: `${data.description}`}}, {}, function(err, numReplaced){
-    		if (err) throw new Error(err);
-    	})
+    		if (err) {
+    			res.json({
+    				status: 'failure'
+    			})
+    			throw new Error(err);
+    		}
+    		logActivity('Job Scheduling Calendar', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} has updated the job order for ${data.custName} at ${data.jobAddress} from ${data.startDate} ${data.endDate}`);
+    	});
+
+    	title1 = `${data.firstname} ${data.lastname} has updated a scheduled job.`;
+    	content1 = `${data.firstname} ${data.lastname} has updated the job for ${data.custName} at ${data.jobAddress} from ${data.startDate} to ${data.endDate}`;
+    	//sendEmail(MANAGER_EMAILS, title1, content1);
+
+    	userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc) {
+    		if (err) {
+    			res.json({
+    				status: 'failure'
+    			});
+    			throw new Error(err);
+    		}
+    		let title2 = `The job for ${data.custName} at ${data.jobAddress} has been successfully updated.`;
+    		let content2 = `Thank you ${data.firstname} ${data.lastname}. The job for ${data.custName} at ${data.jobAddress} from ${data.startDate} to ${data.endDate} was successfully updated.`;
+    		sendEmail(doc.email, title2, content2);
+    	});
     
     	res.json({
       		status:'success',

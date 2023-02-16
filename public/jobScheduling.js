@@ -30,6 +30,7 @@ const calendar = document.getElementById('calendar');
 const editEventModal = document.getElementById('editEventModal');
 const backDrop = document.getElementById('modalBackDrop');
 let events = {};
+let user;
 
 // asynchronous function to get employee information on the open of the webpage
 async function on_open(){
@@ -59,7 +60,7 @@ async function on_open(){
 
 // asynchronous function to validate the form submission and send the information to the webserver
 async function handle_submission(){
-  let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
   if (user == null || user == undefined){
     alert('Please login before submitting a request');
     window.open('login.html', '_self');
@@ -353,17 +354,20 @@ function closeModal() {
 }
 
 async function updateEntry(tsheetsid, dbId){
-  let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  const custName = document.getElementById('cn').value;
+  const jobAddress = document.getElementById('ja').value;
   const startDate = document.getElementById('sd').value;
   const endDate = document.getElementById('ed').value;
   const jobType = document.getElementById('jt').value;
   const description = document.getElementById('desc').value;
+  let firstname = user.firstname;
+  let lastname = user.lastname;
   
   if (user.tsheetsid == tsheetsid){
     let confirmation = confirm('Are you sure you want to update this entry?');
     if (confirmation){
       // creates an object with field information to update
-      const data = {dbId, startDate, endDate, jobType, description};
+      const data = {dbId, startDate, endDate, jobType, description, tsheetsid, firstname, lastname};
       // creates post options for the api request
       const postOptions = {
         method: 'POST',
@@ -383,12 +387,13 @@ async function updateEntry(tsheetsid, dbId){
 }
 
 async function deleteEntry(tsheetsid, dbId){
-  let user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  let firstname = user.firstname;
+  let lastname = user.lastname;
   if (user.tsheetsid == tsheetsid){
     let confirmation = confirm('Are you sure you want to delete this entry?');
     if (confirmation){
       // creates an object with the id to delete 
-      const data = {dbId};
+      const data = {dbId, tsheetsid, firstname, lastname};
       // creates post options for the api request
       const postOptions = {
         method: 'POST',
