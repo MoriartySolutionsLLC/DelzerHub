@@ -62,6 +62,7 @@ async function submitBtnHandler() {
 	let secondaryEmail = "";
 	let handled = "false";
 	let notes = "";
+	let tsheetsid = user.tsheetsid;
 
 	if(secondaryEmpID != "") {
 		for (let i = 0; i < admins.length; i++){
@@ -82,7 +83,7 @@ async function submitBtnHandler() {
 			}
 		}
 
-		let data = {empName, jobClass, contactName, contactPhone, contactEmail, reasonForCall, ownerName, jobAddress, mailingAddress, comments, primaryEmp, primaryEmail, secondaryEmp, secondaryEmail, handled, notes};
+		let data = {tsheetsid, empName, jobClass, contactName, contactPhone, contactEmail, reasonForCall, ownerName, jobAddress, mailingAddress, comments, primaryEmp, primaryEmail, secondaryEmp, secondaryEmail, handled, notes};
 
 		const postOptions = {
 			method: 'POST',

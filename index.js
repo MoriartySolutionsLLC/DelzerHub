@@ -34,6 +34,7 @@ function main(){
 
 	/*UNIVERSAL API REQUESTS*/
 	app.get('/api/get_all_users', (req, res) => {
+		userDB.loadDatabase();
 		userDB.find({}, function(err, docs) {
 			if (docs != null && docs != undefined){
   			for (let i = 0; i < docs.length; i++){
@@ -160,7 +161,7 @@ function main(){
 		const data = req.body;
 		try {
 			permissionsDB.insert(data);
-			activityLogDB('Employee List', `${data.userID}`, `${data.userFirstname} ${data.userLastname} updated ${data.empFirstname} ${data.empLastname}'s permissions.`)
+			logActivity('Employee List', `${data.userID}`, `${data.userFirstname} ${data.userLastname} updated ${data.empFirstname} ${data.empLastname}'s permissions.`)
 			res.json({
 				status: 'success'
 			})
@@ -176,7 +177,7 @@ function main(){
 		const data = req.body;
 		try {
 			permissionsDB.update({_id: `${data._id}`}, {$set: { approveTimeOff: data.approveTimeOff, jobSchedulingCalendarView: data.jobSchedulingCalendarView, dispatchCallInFormView: data.dispatchCallInFormView, callInHubView: data.callInHubView, transportingEquipmentForm: data.transportingEquipmentForm, employeeListView: data.employeeListView}})
-			activityLogDB('Employee List', `${data.userID}`, `${data.userFirstname} ${data.userLastname} updated ${data.empFirstname} ${data.empLastname}'s permissions`);
+			logActivity('Employee List', `${data.userID}`, `${data.userFirstname} ${data.userLastname} updated ${data.empFirstname} ${data.empLastname}'s permissions`);
 			res.json({
 				status: 'success'
 			})
@@ -270,7 +271,7 @@ function main(){
     timeOffDB.update({ _id: `${data.dbId}` }, { $set: { startDate: `${data.startDate}`, endDate: `${data.endDate}`, reason: `${data.reason}`}}, {}, function(err, numReplaced){
       if (err) {
       	res.json({
-      		status: 'failure';
+      		status: 'failure'
       	});
       	throw new Error(err);
       };
@@ -373,31 +374,29 @@ function main(){
     	const data = req.body;
     	const timestamp = Date.now();
     
-    	jobSchedulingDB.findOne({_id: `${data._id}`}, function(errr, doc) {
+  	
+    	jobSchedulingDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
     		if (err) {
     			res.json({
     				status: 'failure'
     			});
-    			throw new Error(errr);
+    			throw new Error(err);
+    		} 
+    	});
+    	logActivity('Job Scheduling Calendar', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} deleted a job request for ${data.custName} at ${data.jobAddress} from ${data.startDate} to ${data.endDate}`);
+    	let title1 = `${data.firstname} ${data.lastname} deleted a job that was scheduled`;
+    	let content1 = `${data.firstname} ${data.lastname} deleted the job for ${data.custName} at ${data.jobAddress} from ${data.startDate} to ${data.endDate}.`;
+    	//sendEmail(MANAGER_EMAILS, title1, content1);
+    	let title2 = `The job for ${data.custName} at ${data.jobAddress} was successfully deleted.`;
+    	let content2 = `Thank you ${data.firstname} ${data.lastname}. The job for ${data.custName} at ${data.jobAddress} from ${data.startDate} to ${data.endDate} has been successfully deleted.`;
+    	userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc) {
+    		if (err) {
+    			res.json({
+    				status: 'failure'
+    			})
+    			throw new Error(err);
     		}
-    		logActivity('Job Scheduling Calendar', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} deleted a job request for ${doc.custName} at ${doc.jobAddress} from ${doc.startDate} to ${doc.endDate}`);
-	    	let title1 = `${data.firstname} ${data.lastname} deleted a job that was scheduled`;
-	    	let content1 = `${data.firstname} ${data.lastname} deleted the job for ${data.custName} at ${data.jobAddress} from ${doc.startDate} to ${doc.endDate}.`;
-	    	//sendEmail(MANAGER_EMAILS, title1, content1);
-	    	let title2 = `The job for ${doc.custName} at ${doc.jobAddress} was successfully deleted.`;
-	    	let content2 = `Thank you ${data.firstname} ${data.lastname}. The job for ${custName} at ${jobAddress} from ${doc.startDate} to ${doc.endDate} has been successfully deleted.`;
-	    	userDB.findOne({_id: `${data.tsheetsid}`}, function(err, user) {
-	    		if (err) {
-	    			res.json({
-	    				status: 'failure'
-	    			});
-	    			throw new Error(err);
-	    		}
-	    		sendEmail(user.email, title2, content2);
-	    	});
-	    	jobSchedulingDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
-	    		if (err) throw new Error(err);
-	    	});
+    		sendEmail(doc.email, title2, content2);
     	});
     	res.json({
       		status:'success',
@@ -476,6 +475,7 @@ function main(){
 	  	if (data.secondaryEmail != "") {
 	  		to += `,${data.secondaryEmail}`;
 	  	}
+			//to += `,${MANAGER_EMAILS}`;
 	  	let title = `Dispatch Call In - ${data.contactName} - ${data.jobAddress} - ${date}`;
 	  	let content = `Date: ${date}\n\nEmployee: ${data.empName}\n\nJob Class: ${data.jobClass}\n\nJob Contact: ${data.contactName}
 	  	\nContact Phone: ${data.contactPhone}\n\nContact Email: ${data.contactEmail}\n\nOwner/Customer Name: ${data.ownerName}
@@ -483,6 +483,8 @@ function main(){
 	  	\nComments: ${data.comments}\n\nPrimary Staff Member: ${data.primaryEmp}\n\nSecondary Staff Member: ${data.secondaryEmp}`;
 
 	  	sendEmail(to, title, content);
+
+	  	logActivity('Dispatch Call-In Form', `${data.tsheetsid}`, `${data.empName} submitted a call in from ${data.contactName}.`);
 
 	  	res.json({
 	  		status: 'success'
@@ -513,7 +515,7 @@ function main(){
   	const data = req.body;
   	dispatchCallInDB.update({ _id: `${data._id}` }, { $set: { handled: 'true' }}, {}, function(err, numReplaced) {
   		if (err) throw new Error(err);
-
+  		logActivity('Call-In Hub', `${data.tsheetsid}`, `${data.empName} closed a call-in from ${data.contactName} that was placed on ${data.date}.`);
   		if (numReplaced < 1) {
   			res.json({
   				status: 'failure'
@@ -531,7 +533,7 @@ function main(){
   	const data = req.body;
   	dispatchCallInDB.update({ _id: `${data._id}` }, { $set: { handled: 'false' }}, {}, function(err, numReplaced) {
   		if (err) throw new Error(err);
-
+  		logActivity('Call-In Hub', `${data.tsheetsid}`, `${data.empName} reopened a call-in from ${data.contactName} that was placed on ${data.date}.`);
   		if (numReplaced < 1) {
   			res.json({
   				status: 'failure'
@@ -549,7 +551,7 @@ function main(){
   	const data = req.body;
   	dispatchCallInDB.update({ _id: `${data._id}` }, { $set: { notes: `${data.notes}` }}, {}, function(err, numReplaced) {
   		if (err) throw new Error(err);
-
+  		logActivity('Call-In Hub', `${data.tsheetsid}`, `${data.empName} added notes to a call-in from ${data.contactName} made on ${data.date}`);
   		if (numReplaced < 1) {
   			res.json({
   				status: 'failure'
@@ -717,7 +719,7 @@ async function updateUsers(){
 	   		let number = users[id].mobile_number;
 	   		let password = fname + "54321#";
 
-	   		let user = {'_id':id, 'username':email, 'firstname':fname, 'lastname':lname, 'email':email, 'workemail':workemail, 'password': password};
+	   		let user = {'_id':id, 'username':email, 'firstname':fname, 'lastname':lname, 'email':email, 'workemail':workemail, 'number':number, 'password': password};
 
 	   		const result = new Promise((resolve, reject) => {
 	   			userDB.findOne({ firstname: fname, lastname: lname}, function (err, doc){

@@ -1,3 +1,4 @@
+const user = JSON.parse(localStorage.getItem('currentlyLoggedIn'))
 let callIns = {};
 const callInModal = document.getElementById('viewCallInModal');
 const backDrop = document.getElementById('modalBackDrop');
@@ -174,12 +175,18 @@ function callInBlockBtnHandler(callIn) {
 }
 
 async function closeCallIn(callIn){
+	let _id = callIn._id;
+	let contactName = callIn.contactName;
+	let tsheetsid = user.tsheetsid
+	let empName = `${user.firstname} ${user.lastname}`;
+	let date = callIn.submissionDate;
+	let data = {_id, empName, tsheetsid, contactName, date};
 	const postOptions = {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify(callIn)
+		body: JSON.stringify(data)
 	}
 
 	const closeCallInRes = await fetch('/api/close_callin', postOptions);
@@ -192,12 +199,18 @@ async function closeCallIn(callIn){
 }
 
 async function reopenCallIn(callIn){
+	let _id = callIn._id;
+	let contactName = callIn.contactName;
+	let tsheetsid = user.tsheetsid
+	let empName = `${user.firstname} ${user.lastname}`;
+	let date = callIn.submissionDate;
+	let data = {_id, empName, tsheetsid, contactName, date};
 	const postOptions = {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify(callIn)
+		body: JSON.stringify(data)
 	}
 
 	const reopenCallInRes = await fetch('/api/reopen_callin', postOptions);
@@ -210,8 +223,7 @@ async function reopenCallIn(callIn){
 }
 
 async function addNote(callIn){
-	let user = JSON.parse(localStorage.getItem('currentlyLoggedIn'));
-	let usersName = `${user.firstname} ${user.lastname}`;
+	let empName = `${user.firstname} ${user.lastname}`;
 	let notes = document.getElementById('addNotesField').value;
 	let submissionDate = new Date();
 	let date = submissionDate.toLocaleDateString();
@@ -221,16 +233,21 @@ async function addNote(callIn){
 	} else {
 		notesString = "::";
 	}
-	notesString += `${usersName} - ${date} - ${notes}`;
+	notesString += `${empName} - ${date} - ${notes}`;
 
 	callIn.notes += notesString;
+	notes = callIn.notes;
+	let _id = callIn._id;
+	let tsheetsid = user.tsheetsid;
+	let contactName = callIn.contactName;
+	const data = {notes, _id, tsheetsid, empName, date, contactName};
 
 	const postOptions = {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify(callIn)
+		body: JSON.stringify(data)
 	}
 
 	const closeCallInRes = await fetch('/api/add_callinnotes', postOptions);

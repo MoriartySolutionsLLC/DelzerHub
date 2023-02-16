@@ -29,6 +29,19 @@ async function on_open() {
 	const getEmpsResults = await getEmps.json();
 	empList = getEmpsResults;
 	for (let i = 0; i < empList.length; i++){
+		let phoneArray = empList[i].number.split('');
+		let phoneStr = "(";
+		for (let k = 0; k < phoneArray.length; k++){
+			if (k == 3){
+				phoneStr += ")-";
+			} else if (k == 6) {
+				phoneStr += "-";
+			}
+			phoneStr += phoneArray[k];
+		}
+
+		if (phoneStr == "(") phoneStr = "";
+
 		let newRow = employeeTableRef.insertRow();
 
 		let nameCell = newRow.insertCell();
@@ -39,7 +52,7 @@ async function on_open() {
 		let name = document.createTextNode(`${empList[i].firstname} ${empList[i].lastname}`);
 		let email = document.createTextNode(`${empList[i].email}`);
 		let workEmail = document.createTextNode(`${empList[i].workemail}`);
-		let number = document.createTextNode(`${empList[i].number}`);
+		let number = document.createTextNode(`${phoneStr}`);
 
 		nameCell.appendChild(name);
 		emailCell.appendChild(email);
@@ -67,6 +80,18 @@ function openModal(empID){
 	document.getElementById('modalHeader').innerHTML = `${pickedEmp.firstname} ${pickedEmp.lastname}`
 
 	if (pickedEmp != null && pickedEmp != undefined) {
+		let phoneArray = pickedEmp.number.split('');
+		let phoneStr = "(";
+		for (let k = 0; k < phoneArray.length; k++){
+			if (k == 3){
+				phoneStr += ")-";
+			} else if (k == 6) {
+				phoneStr += "-";
+			}
+			phoneStr += phoneArray[k];
+		}
+		if (phoneStr == "(") phoneStr = "";
+
 		let updateButton = document.getElementById('updateBtn');
 		btnRemoveEventListeners(updateButton);
 		document.getElementById('modalBackDrop').addEventListener('click', closeModal);
@@ -75,7 +100,7 @@ function openModal(empID){
 		document.getElementById('modalEmpName').value = `${pickedEmp.firstname} ${pickedEmp.lastname}`
       	document.getElementById('modalEmpEmail').value = pickedEmp.email;
       	document.getElementById('modalEmpWorkEmail').value = pickedEmp.workemail;
-      	document.getElementById('modalEmpNumber').value = pickedEmp.number;
+      	document.getElementById('modalEmpNumber').value = phoneStr;
 		document.getElementById('updateBtn').addEventListener('click', () => updateEmp(pickedEmp));
       	editUserModal.style.display = 'block';
       	backDrop.style.display = 'block';
@@ -104,7 +129,7 @@ function permTabClicked(pickedEmp) {
 	if (pickedEmpPermList != null && pickedEmpPermList != undefined) {
 		document.getElementById('approveTimeOffPermCheckBox').checked = pickedEmpPermList.approveTimeOff;
 		document.getElementById('jobSchedulingCalendarViewPermCheckBox').checked = pickedEmpPermList.jobSchedulingCalendarView;
-		document.getElementById('dispatchCallInFormViewPermCheckBox').checked = pickedEmpPermList.dispatchCallInFormView;
+		document.getElementById('dispatchCallInFormPermCheckBox').checked = pickedEmpPermList.dispatchCallInFormView;
 		document.getElementById('callInHubViewPermCheckBox').checked = pickedEmpPermList.callInHubView;
 		document.getElementById('transportingEquipmentFormPermCheckBox').checked = pickedEmpPermList.transportingEquipmentForm;
 		document.getElementById('employeeListViewPermCheckBox').checked = pickedEmpPermList.employeeListView;
@@ -141,7 +166,7 @@ async function updatePerms(pickedEmp){
 	let userLastname = user.lastname;
 	let approveTimeOff = document.getElementById('approveTimeOffPermCheckBox').checked;
 	let jobSchedulingCalendarView = document.getElementById('jobSchedulingCalendarViewPermCheckBox').checked;
-	let dispatchCallInFormView = document.getElementById('dispatchCallInFormViewPermCheckBox').checked;
+	let dispatchCallInFormView = document.getElementById('dispatchCallInFormPermCheckBox').checked;
 	let callInHubView = document.getElementById('callInHubViewPermCheckBox').checked;
 	let transportingEquipmentForm = document.getElementById('transportingEquipmentFormPermCheckBox').checked;
 	let employeeListView = document.getElementById('employeeListViewPermCheckBox').checked;
@@ -160,8 +185,7 @@ async function updatePerms(pickedEmp){
 
 	const addPerms = await fetch('/api/update_permissionsList', postOptions);
 	const addPermsResult = await addPerms.json();
-
-	if (addPermsResult == null || addPermsResult == undefined || addPermsResult.status == 'failure') {
+	if (addPermsResult.status == 'failure') {
 		alert('ERROR: An error has occured');
 		closeModal();
 	} else {
@@ -178,7 +202,7 @@ async function addPerms(pickedEmp) {
 	let empLastname = pickedEmp.lastname;
 	let approveTimeOff = document.getElementById('approveTimeOffPermCheckBox').checked;
 	let jobSchedulingCalendarView = document.getElementById('jobSchedulingCalendarViewPermCheckBox').checked;
-	let dispatchCallInFormView = document.getElementById('dispatchCallInFormViewPermCheckBox').checked;
+	let dispatchCallInFormView = document.getElementById('dispatchCallInFormPermCheckBox').checked;
 	let callInHubView = document.getElementById('callInHubViewPermCheckBox').checked;
 	let transportingEquipmentForm = document.getElementById('transportingEquipmentFormPermCheckBox').checked;
 	let employeeListView = document.getElementById('employeeListViewPermCheckBox').checked;
@@ -195,7 +219,6 @@ async function addPerms(pickedEmp) {
 
 	const addPerms = await fetch('/api/add_permissionsList', postOptions);
 	const addPermsResult = await addPerms.json();
-
 	if (addPermsResult == null || addPermsResult == undefined || addPermsResult.status == 'failure') {
 		alert('ERROR: An error has occured');
 		closeModal();
