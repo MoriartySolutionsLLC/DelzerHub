@@ -208,7 +208,15 @@ function main(){
 		let title = `${data.firstname} ${data.lastname} requests this time off`;
 		let title2 = `Thank you for your time off request`;
 		let content1 = `${data.firstname} ${data.lastname} has submitted a request to take time off from ${data.startDate} to ${data.endDate}\nHis reason is: ${data.reason}\n`;
-		let content2 = `Thank you ${data.firstname} ${data.lastname}, your request has successfully been submitted.\n\n${data.startDate} to ${data.endDate}\nReason:\n${data.reason}`;
+		let content2 = `Thank you ${data.firstname} ${data.lastname}, your request has successfully been submitted.\n\n${data.startDate} to ${data.endDate}\nReason:\n${data.reason}\n`;
+
+		if (data.shiftCover != null && data.shiftCover != undefined && data.shiftCover != "") {
+			content1 += `${data.shiftCover} will be covering their shift.`;
+			content2 += `${data.shiftCover} is covering your shift.`
+		} else {
+			content1 += `${data.firstname} ${data.lastname} has not gotten somebody to cover their shift.`;
+			content2 += `You have not gotten anybody to cover your shift.`
+		}
 
 		// Runs the function to send an email to the managers
 		//sendEmail(MANAGER_EMAILS, title, content1);
@@ -240,7 +248,7 @@ function main(){
     
     	timeOffDB.remove({ _id: `${data.dbId}` }, {}, function (err, numRemoved) {
     		if (err) throw new Error(err);
-    		logActivity('Time Off Calendar', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} has deleted their time off request from ${startDate} to ${endDate}.`)
+    		logActivity('Time Off Calendar', `${data.tsheetsid}`, `${data.firstname} ${data.lastname} has deleted their time off request from ${data.startDate} to ${data.endDate}.`)
     		userDB.findOne({_id: `${data.tsheetsid}`}, function(err, doc) {
     			if (err) {
     				res.json({
@@ -250,7 +258,7 @@ function main(){
     			};
     			sendEmail(doc.email, title2, content2);
     		})
-    		//sendEmail(MANAGER_EMAILS, title1, content1);
+    		//sendEmail(MANAGER_EMAILS, title, content1);
     		res.json({
       		status:'success',
     			timestamp: timestamp
@@ -268,7 +276,7 @@ function main(){
 		let content1 = `${data.firstname} ${data.lastname} has updated their request to take time off from ${data.startDate} to ${data.endDate}`;
 		let content2 = `Thank you ${data.firstname} ${data.lastname}, your request has successfully been updated.\n\n${data.startDate} to ${data.endDate}`;
     
-    timeOffDB.update({ _id: `${data.dbId}` }, { $set: { startDate: `${data.startDate}`, endDate: `${data.endDate}`, reason: `${data.reason}`}}, {}, function(err, numReplaced){
+    timeOffDB.update({ _id: `${data.dbId}` }, { $set: { startDate: `${data.startDate}`, endDate: `${data.endDate}`, shiftCover: `${data.shiftCover}`, reason: `${data.reason}`}}, {}, function(err, numReplaced){
       if (err) {
       	res.json({
       		status: 'failure'
@@ -285,7 +293,7 @@ function main(){
       	sendEmail(doc.email, title2, content2);
       });
     })
-  	//sendEmail('kian.moriarty@delzerbiz.com, john@delzerbiz.com, jim@delzerbiz.com', title1, content1);
+  	//sendEmail(MANAGER_EMAILS, title, content1);
     res.json({
       status:'success',
       timestamp: timestamp
@@ -791,6 +799,7 @@ async function getTimeOffData(_callback){
         objectValue['tsheetsid'] = docs[i].tsheetsid;
 				objectValue['startDate'] = docs[i].startDate;
 				objectValue['endDate'] = docs[i].endDate;
+				objectValue['shiftCover'] = docs[i].shiftCover;
 				objectValue['reason'] = docs[i].reason;
 				objectValue['approved'] = docs[i].approved;
 				eventList.push(objectValue);
@@ -855,14 +864,14 @@ async function sendTsheetsRequest(data){
 	});
 	let tsEntryId = await result;
 
-	let dbEntry = {'_id':tsEntryId, 'firstname':data.firstname, 'lastname':data.lastname, 'tsheetsid':data.tsheetsid, 'startDate':data.startDate, 'endDate':data.endDate, 'reason':data.reason, 'approved': data.approved}
+	let dbEntry = {'_id':tsEntryId, 'firstname':data.firstname, 'lastname':data.lastname, 'tsheetsid':data.tsheetsid, 'startDate':data.startDate, 'endDate':data.endDate, 'shiftCover':data.shiftCover , 'reason':data.reason, 'approved': data.approved}
 
 	//saves request to database
 	timeOffDB.insert(dbEntry);
 }
 
 // function to create the request body for the time off request
-function createRequestBody(id, startDate, endDate, reason){
+function createRequestBody(id, startDate, endDate, shiftCover, reason){
 
 	// initializes date with the built in date class as the start date
 	const date = new Date(startDate.getTime());
@@ -912,11 +921,17 @@ function createRequestBody(id, startDate, endDate, reason){
 		}
 	}
 
+	if (shiftCover != null && shiftCover != undefined && shiftCover != "") {
+		shiftCover = `${shiftCover} will be covering their shift.`
+	} else {
+		shiftCover = 'They have not gotten somebody to cover their shift yet.'
+	}
+
 	// creates the header for the request body
 	let body = `	{
 		"data": [{
 			"time_off_request_notes": [{
-				"note": "${reason}"
+				"note": "${reason} ${shiftCover}"
 			}],
 			"user_id": ${id},
 			"time_off_request_entries": [`

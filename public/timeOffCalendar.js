@@ -56,6 +56,7 @@ async function handle_submission(){
   // gets the form entries and assigns them to the appropriate variables
 	let startDate = document.getElementById("start date").value;
 	let endDate = document.getElementById("end date").value;
+  let shiftCover = document.getElementById("shiftCover").value;
 	let reason = document.getElementById("reason").value;
   let approved = "false";
 
@@ -64,7 +65,7 @@ async function handle_submission(){
 	} else { 
 		
 		// creates an object with the form fields
-		const data = {firstname, lastname, tsheetsid, startDate, endDate, reason, approved};
+		const data = {firstname, lastname, tsheetsid, startDate, endDate, shiftCover, reason, approved};
 		// creates post options for the api request
 		const postOptions = {
 			method: 'POST',
@@ -302,6 +303,7 @@ function openModal(startDate, endDate, tsheetsid){
       document.getElementById('ln').value = eventForDay.lastname;
       document.getElementById('sd').value = eventForDay.startDate;
       document.getElementById('ed').value = eventForDay.endDate;
+      document.getElementById('sc').value = eventForDay.shiftCover;
       document.getElementById('re').value = eventForDay.reason;
     	deleteEventModal.style.display = 'block';
 
@@ -320,13 +322,14 @@ async function updateEntry(tsheetsid, dbId){
   const user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
   const startDate = document.getElementById('sd').value;
   const endDate = document.getElementById('ed').value;
+  const shiftCover = document.getElementById('sc').value;
   const reason = document.getElementById('re').value;
   
   if (tsheetsid == user.tsheetsid){
     let confirmation = confirm('Are you sure you want to update this entry?');
     if (confirmation){
       // creates an object with field information to update
-      const data = {dbId, tsheetsid, startDate, endDate, reason};
+      const data = {dbId, tsheetsid, startDate, endDate, shiftCover, reason};
       // creates post options for the api request
       const postOptions = {
         method: 'POST',
