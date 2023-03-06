@@ -717,7 +717,7 @@ async function updateUsers(){
 	   		let email = users[id].email;
 	   		let workemail = "";
 	   		let number = users[id].mobile_number;
-	   		let password = fname + "54321#";
+	   		let password = fname + "$";
 
 	   		let user = {'_id':id, 'username':email, 'firstname':fname, 'lastname':lname, 'email':email, 'workemail':workemail, 'number':number, 'password': password};
 
