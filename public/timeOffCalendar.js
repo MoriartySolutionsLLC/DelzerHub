@@ -320,6 +320,8 @@ function closeModal() {
 
 async function updateEntry(tsheetsid, dbId){
   const user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
+  const firstname = user.firstname;
+  const lastname = user.lastname;
   const startDate = document.getElementById('sd').value;
   const endDate = document.getElementById('ed').value;
   const shiftCover = document.getElementById('sc').value;
@@ -329,7 +331,7 @@ async function updateEntry(tsheetsid, dbId){
     let confirmation = confirm('Are you sure you want to update this entry?');
     if (confirmation){
       // creates an object with field information to update
-      const data = {dbId, tsheetsid, startDate, endDate, shiftCover, reason};
+      const data = {dbId, tsheetsid, firstname, lastname, startDate, endDate, shiftCover, reason};
       // creates post options for the api request
       const postOptions = {
         method: 'POST',

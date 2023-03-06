@@ -829,7 +829,7 @@ async function sendTsheetsRequest(data){
 	// gets the token
 	const token = getToken();
 	// runs the createRequest body function to create the body of the api request
-	const requestBody = createRequestBody(data.tsheetsid, startDate, endDate, data.reason);
+	const requestBody = createRequestBody(data.tsheetsid, startDate, endDate, data.shiftCover, data.reason);
 	// creates the options for the tsheets api post request
 	const options = {
 		method: 'POST',
