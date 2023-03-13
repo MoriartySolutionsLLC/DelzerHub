@@ -206,7 +206,7 @@ button:disabled {
   width: 350px;
   top: 100px;
   left: calc(50% - 175px);
-  position: fixed;
+  position: absolute;
   font-family: sans-serif;
 }
 

@@ -193,6 +193,10 @@ button:hover {
   background: #101357;
 }
 
+.sweep {
+  background: #333333;
+}
+
 .event {
   font-size: 10px;
   padding: 3px;
@@ -242,6 +246,15 @@ button:hover {
   font-size: 10px;
   padding: 3px;
   background-color: #101357;
+  color: white;
+  max-height: 55px;
+  overflow: hidden;
+}
+
+.sweepbiz {
+  font-size: 10px;
+  padding: 3px;
+  background-color: #333333;
   color: white;
   max-height: 55px;
   overflow: hidden;

@@ -202,7 +202,7 @@ function load() {
       let dayB = parseInt(fixDay)
       
   		for (let k = 0; k < Object.keys(events).length; k++){
-        let startDay = new Date(events[k].startDate);
+        let startDay = new Date(events[k].startDate + "T00:00:00");
         let startMonth = startDay.getMonth() + 1;
         let startD = startDay.getDate() + 1;
         let endDay = new Date(events[k].endDate + "T00:00:00");
@@ -210,7 +210,8 @@ function load() {
         let endD = endDay.getDate();
         let hclass = 'event';
         if (endMonth == dayMonth && startMonth < dayMonth && dayB == 1){
-        
+              console.log(startMonth)
+              console.log("Start Month less than Day Month")
               let j = i - 1;
               let endDate = false;
               let hclass = "";
@@ -306,7 +307,7 @@ function openModal(startDate, endDate, tsheetsid){
       document.getElementById('sc').value = eventForDay.shiftCover;
       document.getElementById('re').value = eventForDay.reason;
     	deleteEventModal.style.display = 'block';
-
+      window.scrollTo({top: 0});
   	  backDrop.style.display = 'block';
 	}
 }
@@ -322,6 +323,7 @@ async function updateEntry(tsheetsid, dbId){
   const user = JSON.parse(localStorage.getItem("currentlyLoggedIn"));
   const firstname = user.firstname;
   const lastname = user.lastname;
+  
   const startDate = document.getElementById('sd').value;
   const endDate = document.getElementById('ed').value;
   const shiftCover = document.getElementById('sc').value;

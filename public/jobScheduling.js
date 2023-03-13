@@ -224,7 +224,7 @@ function load() {
       let dayB = parseInt(fixDay)
       
   		for (let k = 0; k < Object.keys(events).length; k++){
-        let startDay = new Date(events[k].startDate);
+        let startDay = new Date(events[k].startDate + "T00:00:00");
         let startMonth = startDay.getMonth() + 1;
         let startD = startDay.getDate() + 1;
         let endDay = new Date(events[k].endDate + "T00:00:00");
@@ -249,6 +249,9 @@ function load() {
                   break;
                 case "waterbiz":
                   hclass = "waterbiz";
+                  break;
+                case "sweepbiz":
+                  hclass = "sweepbiz";
                   break;
               }
           
@@ -291,6 +294,9 @@ function load() {
               break;
             case "waterbiz":
               hclass = "waterbiz";
+              break;
+            case "sweepbiz":
+              hclass = "sweepbiz";
               break;
           }
           
@@ -336,6 +342,7 @@ function openModal(startDate, endDate, custName, jobAddress){
       document.getElementById('jt').value = eventForDay.jobType;
       document.getElementById('desc').value = eventForDay.description;
     	editEventModal.style.display = 'block';
+      window.scrollTo({top: 0});
   	  backDrop.style.display = 'block';
 	}
 }
@@ -357,12 +364,12 @@ async function updateEntry(tsheetsid, dbId){
   const description = document.getElementById('desc').value;
   let firstname = user.firstname;
   let lastname = user.lastname;
-  
+
   if (user.tsheetsid == tsheetsid){
     let confirmation = confirm('Are you sure you want to update this entry?');
     if (confirmation){
       // creates an object with field information to update
-      const data = {dbId, startDate, endDate, jobType, description, tsheetsid, firstname, lastname};
+      const data = {dbId, custName, jobAddress, startDate, endDate, jobType, description, tsheetsid, firstname, lastname};
       // creates post options for the api request
       const postOptions = {
         method: 'POST',
