@@ -597,8 +597,8 @@ function sendEmail(to, title, content){
 	let transporter = nodemailer.createTransport({
 		service: 'gmail',
 		auth: {
-			user: 'DDI.TimeOff.Request@gmail.com',
-			pass: 'vszefhnvbqkcoyuz'
+			user: 'delzerdiversifiedautoattendant@gmail.com',
+			pass: 'byephhwilaigqgux'
 		}
 	});
 
