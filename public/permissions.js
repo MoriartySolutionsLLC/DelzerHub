@@ -16,6 +16,7 @@ function checkPerm() {
 		document.getElementById("callInListLink").setAttribute("href", "login.html");
 		document.getElementById("transportingEquipmentLink").setAttribute("href", "login.html");
 		document.getElementById("employeeListLink").setAttribute("href", "login.html");
+		document.getElementById("repairOrdersLink").setAttribute("href", "login.html");
 	} else {
 		jobSchedulingCalendarPermFunc();
 		dispatchCallInFormPermFunc();
