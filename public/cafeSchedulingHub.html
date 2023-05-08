@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="styles.css">
+		<link rel="stylesheet" href="cafeSchedulingHubStyle.css">
+		<meta charset="UTF-8">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+
+	<body onload="on_open(); checkPerm()">
+		<header>
+			<div id="loginArea">
+				<a href="login.html" class="loginBtn" id="loginBtn">Login</a>
+			</div>
+      		<a href="index.html"><img src="ddi_logo.png" class="ddi_logo"></a>
+		</header>
+
+		<main>
+			<div style="top: 0; position: -webkit-sticky; position: sticky">
+				<div class="navbar">
+					<a href="index.html">Main</a>
+					
+					<div class="dropdown">
+							<button class="dropbtn">All Employees
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-content">
+								<a href="timeOffCalendar.html" id="timeOffCalendarLink">Time Off Calendar</a>
+								<a href="https://docs.google.com/forms/d/e/1FAIpQLSeUCMjTwtfYFEi7oQhyRG555l1wqJzu3ibgm4PCpunNWJ9LLQ/viewform" id="purchaseOrdersLink">Purchase Orders</a>
+								<a href="http://ro.delzerbiz.com/" id="repairOrdersLink">Repair Order Request</a>
+							</div>
+						</div>
+
+						<div class="dropdown">
+							<button class="dropbtn">Dispatch
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-content">
+								<a href="jobScheduling.html" id="jobSchedulingCalendarLink">Job Scheduling Calendar</a>
+								<a href="dispatchCallIn.html" id="dispatchCallInLink">Dispatch Call-In Form</a>
+								<a href="callInHub.html" id="callInListLink">Call-In Hub</a>
+							</div>
+						</div>
+
+						<div class="dropdown">
+							<button class="dropbtn">Rentbiz
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-content">
+								<a href="https://docs.google.com/forms/d/e/1FAIpQLSecRGVwTR0iOviuFp_V2Fq4AOM4Bf0ewSqygiwQTS4KC5u5Qw/viewform" id="transportingEquipmentLink">Transporting Equipment</a>
+							</div>
+						</div>
+
+						<div class="dropdown">
+							<button class="dropbtn" id="active">Cafebiz
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-content">
+								<a href="cafeSchedulingHub.html" id="cafeSchedulingHubLink" class="active">Scheduling Hub</a>
+							</div>
+						</div>
+
+						<div class="dropdown">
+							<button class="dropbtn" id='adminstrationDropDown'>Administration
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-content">
+								<a href="employeeList.html" id="employeeListLink">Employee List</a>
+							</div>
+						</div>
+
+					<a href="about.html" id="aboutnav">About</a>
+				</div>
+			</div>
+
+			<div class="header">
+				<h1>Cafebiz Scheduling Calendar</h1>
+			</div>
+
+			<div class="sidebysideBlock"> 
+
+				<div class="leftMenu" style="top: 45px; position: -webkit-sticky; position: sticky">
+					<a href="cafeEditSchedule.html" id="lmEditSchedule">Edit Schedule</a>
+					<a href="" id="lmMonthView">Month View</a>
+					<a href="" id="lmWeekView">Week View</a>
+				</div>
+				
+				<div class="mainBody">
+					<div class="pageHeader">
+						<h2>Weekly Schedule</h2>
+					</div>
+					
+					<div class="sidebysideBlock">
+						<button class="rangeBtn" id="previousWeekBtn"><</button>
+						<div class="dateRange">
+							<p id="range"></p>
+						</div>
+						<button class="rangeBtn" id="nextWeekBtn">></button>
+					</div>
+
+					<div class="sidebysideBlock">
+						<div class="weekDayBlock">
+							<div class="weekDayHeader">
+								<p id="sunday">Sunday</p>
+							</div>
+						</div>
+						<div class="weekDayBlock">
+							<div class="weekDayHeader">
+								<p id="monday">Monday</p>
+							</div>
+						</div>
+						<div class="weekDayBlock">
+							<div class="weekDayHeader">
+								<p id="tuesday">Tuesday</p>
+							</div>
+						</div>
+						<div class="weekDayBlock">
+							<div class="weekDayHeader">
+								<p id="wednesday">Wednesday</p>
+							</div>
+						</div>
+						<div class="weekDayBlock">
+							<div class="weekDayHeader">
+								<p id="thursday">Thursday</p>
+							</div>
+						</div>
+						<div class="weekDayBlock">
+							<div class="weekDayHeader">
+								<p id="friday">Friday</p>
+							</div>
+						</div>
+						<div class="weekDayBlocklast">
+							<div class="weekDayHeader">
+								<p id="saturday">Saturday</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</main>
+		<script type="text/javascript" src="cafeSchedulingHub.js"></script>
+		<script type="text/javascript" src="permissions.js"></script>
+	</body>
+
+</html>

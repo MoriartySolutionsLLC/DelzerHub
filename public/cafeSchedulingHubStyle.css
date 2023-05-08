@@ -1,0 +1,240 @@
+.header {
+  width: 100%;
+  background-color: #444444;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.header2 {
+  width: 100%;
+  background-color: #444444;
+  color: white;
+  font-size: 32px;
+  text-align: center;
+  padding: 0;
+}
+
+.header2 p {
+  padding: 10px;
+}
+
+.pageHeader {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333333;
+}
+
+.sidebysideBlock {
+  display: flex;
+  flex-direction: row;
+}
+
+.leftMenu {
+  width: 175px;
+  height: 100%;
+  background-color: #333333;
+  display: flex;
+  flex-direction: column;
+  padding-top: 25px;
+}
+
+.leftMenu a {
+  height: 25px;
+  width: 175px;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  padding-bottom: 25px;
+  padding-left: 25px;
+  text-decoration: none;
+}
+
+.leftMenu a:hover {
+  text-align: center;
+  font-size: 20px;
+  background-color: #444444;
+  line-height: 175%;
+}
+
+.mainBody {
+  padding-left: 50px;
+}
+
+button {
+  font-weight: 700;
+    min-width: 75px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #4B4788;
+    color: white;
+}
+
+button:hover {
+    background-color: #615C96;
+}
+
+.spacer {
+  width: 20px;
+  height: 20px;
+}
+
+.weekDayBlock {
+  margin-top: 15px;
+  width: 150px;
+  border-style: solid;
+  border-width: 2px 0px 2px 2px;
+  border-color: #999999;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.weekDayBlocklast {
+  margin-top: 15px;
+  width: 150px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #999999;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.weekDayHeader {
+  text-align: center;
+  border-style: solid;
+  border-width: 0px 0px 4px 0px;
+  border-color: #999999;
+}
+
+#previousWeekBtn {
+  border-radius: 10px 0px 0px 10px;
+}
+
+#nextWeekBtn {
+  border-radius: 0px 10px 10px 0px;
+}
+
+.dateRange {
+  padding: 0px 10px 0px 10px;
+  background-color: #4B4788;
+  color: white;
+}
+
+.schedArea {
+  padding: 5px;
+}
+
+.schedBlock {
+  padding: 25px 0;
+  text-align: center;
+  border-radius: 5px;
+  color: white;
+  background-color: #4B4788;
+}
+
+.schedBlock:hover {
+  cursor: pointer;
+  background-color: #615C96;
+}
+
+#editModal {
+  font-weight: 700;
+  display: none;
+  z-index: 20;
+  background-color: white;
+  box-shadow: 0px 0px 3px black;
+  border-radius: 5px;
+  top: 100px;
+  left: calc(50% - 400px);
+  position: absolute;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+#editModal .autocomplete input {
+  background-color: #d3d3d3;
+  width: 100%;
+}
+
+#editModal .sidebysideBlock {
+  padding: 0px 25px;
+}
+
+#editModal button {
+  width: 50%;
+  font-size: 18px;
+}
+
+#editModal .editRepeatBtn {
+  width: 100%;
+  background-color: #444444;
+}
+
+#editModal .editRepeatBtn:hover {
+  width: 100%;
+  background-color: #666666;
+}
+
+#editModal .editActiveRepeatBtn {
+  width: 100%;
+  background-color: #4B4788;
+}
+
+#editModal .editActiveRepeatBtn:hover {
+  width: 100%;
+  background-color: #615C96;
+}
+
+#modalBackDrop {
+  display: none;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+  width: 100vw;
+  height: 500vh;
+  position: absolute;
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* EDIT SCHEDULE STYLE */
+
+#scheduleForm {
+  padding: 25px 0px 25px 0px;
+  width: 100%;
+  align-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+#repeatLabel {
+  font-weight: 700;
+}
+
+.repeatBtn {
+  background-color: #444444;
+}
+
+.repeatBtn:hover {
+  background-color: #666666;
+}
+
+.activeRepeatBtn {
+  background-color: #4B4788;
+}
+
+.submitBtns {
+  padding-left: 175px;
+}
+
+.submitBtns button {
+  font-size: 16px;
+  font-weight: 700;
+  height: 50px;
+  width: 175px;
+}

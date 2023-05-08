@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="styles.css">
+		<link rel="stylesheet" href="cafeSchedulingHubStyle.css">
+		<link rel="stylesheet" href="autoCompleteStyle.css">
+		<meta charset="UTF-8">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+
+	<body onload="on_open(); checkPerm()">
+		<header>
+			<div id="loginArea">
+				<a href="login.html" class="loginBtn" id="loginBtn">Login</a>
+			</div>
+      		<a href="index.html"><img src="ddi_logo.png" class="ddi_logo"></a>
+		</header>
+
+		<main>
+			<div style="top: 0; position: -webkit-sticky; position: sticky">
+				<div class="navbar">
+					<a href="index.html">Main</a>
+					
+					<div class="dropdown">
+							<button class="dropbtn">All Employees
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-content">
+								<a href="timeOffCalendar.html" id="timeOffCalendarLink">Time Off Calendar</a>
+								<a href="https://docs.google.com/forms/d/e/1FAIpQLSeUCMjTwtfYFEi7oQhyRG555l1wqJzu3ibgm4PCpunNWJ9LLQ/viewform" id="purchaseOrdersLink">Purchase Orders</a>
+								<a href="http://ro.delzerbiz.com/" id="repairOrdersLink">Repair Order Request</a>
+							</div>
+						</div>
+
+						<div class="dropdown">
+							<button class="dropbtn">Dispatch
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-content">
+								<a href="jobScheduling.html" id="jobSchedulingCalendarLink">Job Scheduling Calendar</a>
+								<a href="dispatchCallIn.html" id="dispatchCallInLink">Dispatch Call-In Form</a>
+								<a href="callInHub.html" id="callInListLink">Call-In Hub</a>
+							</div>
+						</div>
+
+						<div class="dropdown">
+							<button class="dropbtn">Rentbiz
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-content">
+								<a href="https://docs.google.com/forms/d/e/1FAIpQLSecRGVwTR0iOviuFp_V2Fq4AOM4Bf0ewSqygiwQTS4KC5u5Qw/viewform" id="transportingEquipmentLink">Transporting Equipment</a>
+							</div>
+						</div>
+
+						<div class="dropdown">
+							<button class="dropbtn" id="active">Cafebiz
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-content">
+								<a href="cafeSchedulingHub.html" id="cafeSchedulingHubLink" class="active">Scheduling Hub</a>
+							</div>
+						</div>
+
+						<div class="dropdown">
+							<button class="dropbtn" id='adminstrationDropDown'>Administration
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-content">
+								<a href="employeeList.html" id="employeeListLink">Employee List</a>
+							</div>
+						</div>
+
+					<a href="about.html" id="aboutnav">About</a>
+				</div>
+			</div>
+
+			<div class="header">
+				<h1>Cafebiz Scheduling Calendar</h1>
+			</div>
+
+			<div class="sidebysideBlock">
+
+				<div class="leftMenu" style="top: 45px; position: -webkit-sticky; position: sticky">
+					<a href="" id="lmEditSchedule">Edit Schedule</a>
+					<a href="" id="lmMonthView">Month View</a>
+					<a href="" id="lmWeekView">Week View</a>
+				</div>
+
+				<div class="mainBody">
+					<div class="pageHeader">
+						<h2>Scheduling</h2>
+					</div>
+
+					<div class="sidebysideBlock">
+						<button class="rangeBtn" id="previousWeekBtn"><</button>
+						<div class="dateRange">
+							<p id="range"></p>
+						</div>
+						<button class="rangeBtn" id="nextWeekBtn">></button>
+					</div>
+
+					<div id="scheduleForm">
+						<form autocomplete="off">
+							<div class="sidebysideBlock">
+								<div class="autocomplete" style="width:300px;">
+									<input id="empName" type="text" name="employee" placeholder="Employee">
+								</div>
+								<div class="autocomplete" style="width:300px;">
+									<input id="jobType" type="text" name="jobtype" placeholder="Job Type">
+								</div>
+							</div>
+							<div class="spacer"></div>
+							<div class="sidebysideBlock">
+								<div class="autocomplete" style="width:300px;">
+									<input id="dOW" type="text" name="day" placeholder="Day of Week">
+								</div>
+								<div class="spacer"></div>
+								<div class="startTimeDiv">
+									<label for="startTime">Start Time:</label>
+									<input id="startTime" type="time">
+								</div>
+								<div class="spacer"></div>
+								<div class="endTimeDiv">
+									<label for="endTime">End Time:</label>
+									<input id="endTime" type="time">
+								</div>
+							</div>
+							<div id="repeatLabel">
+								<p>Repeat this shift:</p>
+							</div>
+							<div class="sidebysideBlock">
+								<button type="button" class="repeatBtn" id="sundayBtn">Sunday</button>
+								<div class="spacer"></div>
+								<button type="button" class="repeatBtn" id="mondayBtn">Monday</button>
+								<div class="spacer"></div>
+								<button type="button" class="repeatBtn" id="tuesdayBtn">Tuesday</button>
+								<div class="spacer"></div>
+								<button type="button" class="repeatBtn" id="wednesdayBtn">Wednesday</button>
+								<div class="spacer"></div>
+								<button type="button" class="repeatBtn" id="thursdayBtn">Thursday</button>
+								<div class="spacer"></div>
+								<button type="button" class="repeatBtn" id="fridayBtn">Friday</button>
+								<div class="spacer"></div>
+								<button type="button" class="repeatBtn" id="saturdayBtn">Saturday</button>
+							</div>
+							<div class="spacer"></div>
+							<div class="submitBtns">
+								<div class="sidebysideBlock">
+									<button type="button" class="formBtn" id="addToScheduleBtn">Add To Schedule</button>
+									<div class="spacer"></div>
+									<button type="button" class="formBtn" id="clearFormBtn">Clear Form</button>
+								</div>
+							</div>
+						</form>
+					</div>
+
+					<div class="sidebysideBlock">
+						<div class="weekDayBlock" id="sundayBlock">
+							<div class="weekDayHeader">
+								<p id="sunday">Sunday</p>
+							</div>
+						</div>
+						<div class="weekDayBlock" id="mondayBlock">
+							<div class="weekDayHeader">
+								<p id="monday">Monday</p>
+							</div>
+						</div>
+						<div class="weekDayBlock" id="tuesdayBlock">
+							<div class="weekDayHeader">
+								<p id="tuesday">Tuesday</p>
+							</div>
+						</div>
+						<div class="weekDayBlock" id="wednesdayBlock">
+							<div class="weekDayHeader">
+								<p id="wednesday">Wednesday</p>
+							</div>
+						</div>
+						<div class="weekDayBlock" id="thursdayBlock">
+							<div class="weekDayHeader">
+								<p id="thursday">Thursday</p>
+							</div>
+						</div>
+						<div class="weekDayBlock" id="fridayBlock">
+							<div class="weekDayHeader">
+								<p id="friday">Friday</p>
+							</div>
+						</div>
+						<div class="weekDayBlocklast" id="saturdayBlock">
+							<div class="weekDayHeader">
+								<p id="saturday">Saturday</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="editModal">
+				<div class="header2">
+					<p>Edit Shift</p>
+				</div>
+				<form id="edit_time_form">
+					<div class="sidebysideBlock">
+						<div class="autocomplete" style="width:300px;">
+							<label for="formEmpName">Employee:</label>
+							<input id="formEmpName" type="text" name="employee">
+						</div>
+						<div class="spacer"></div>
+						<div class="autocomplete" style="width:300px;">
+							<label for="formJobType">Job Type:</label>
+							<input id="formJobType" type="text" name="jobType" placeholder="Job Type">
+						</div>
+					</div>
+					<div class="spacer"></div>
+					<div class="sidebysideBlock">
+						<div class="autocomplete" style="width:300px;">
+							<label for="formStartTime">Start Time:</label>
+							<input id="formStartTime" type="time">
+						</div>
+						<div class="spacer"></div>
+						<div class="autocomplete" style="width:300px;">
+							<label for="formEndTime">Day Of Week:</label>
+							<input id="formEndTime" type="time">
+						</div>
+					</div>
+					<div class="spacer"></div>
+					<div class="sidebysideBlock">
+						<div class="autocomplete" style="width:300px;">
+							<label for="formDOW">Day Of Week:</label>
+							<input id="formDOW" type="text" name="day" placeholder="Day Of Week">
+						</div>
+					</div>
+					<div class="spacer"></div>
+					<button type="button" class="editRepeatBtn" id="editSundayBtn">Sunday</button>
+					<div class="spacer"></div>
+					<button type="button" class="editRepeatBtn" id="editMondayBtn">Monday</button>
+					<div class="spacer"></div>
+					<button type="button" class="editRepeatBtn" id="editTuesdayBtn">Tuesday</button>
+					<div class="spacer"></div>
+					<button type="button" class="editRepeatBtn" id="editWednesdayBtn">Wednesday</button>
+					<div class="spacer"></div>
+					<button type="button" class="editRepeatBtn" id="editThursdayBtn">Thursday</button>
+					<div class="spacer"></div>
+					<button type="button" class="editRepeatBtn" id="editFridayBtn">Friday</button>
+					<div class="spacer"></div>
+					<button type="button" class="editRepeatBtn" id="editSaturdayBtn">Saturday</button>
+					<div class="spacer"></div>
+					<div class="sidebysideBlock">
+						<button type="button" class="formBtn" id="formSubmitEdit">Submit</button>
+						<div class="spacer"></div>
+						<button type="button" class="formBtn" id="formDeleteShift">Delete Shift</button>
+						<div class="spacer"></div>
+						<button type="button" class="formBtn" id="closeModal">Close Modal</button>
+					</div>
+					<div class="spacer"></div>
+				</form>
+			</div>
+			<div id="modalBackDrop"></div>
+			<br><br>
+		</main>
+		<script type="text/javascript" src="cafeEditSchedule.js"></script>
+		<script type="text/javascript" src="autoComplete.js"></script>
+		<script type="text/javascript" src="permissions.js"></script>
+	</body>
+
+</html>

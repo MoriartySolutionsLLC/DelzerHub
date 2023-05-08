@@ -132,6 +132,8 @@ function permTabClicked(pickedEmp) {
 		document.getElementById('dispatchCallInFormPermCheckBox').checked = pickedEmpPermList.dispatchCallInFormView;
 		document.getElementById('callInHubViewPermCheckBox').checked = pickedEmpPermList.callInHubView;
 		document.getElementById('transportingEquipmentFormPermCheckBox').checked = pickedEmpPermList.transportingEquipmentForm;
+		document.getElementById('cafeSchedulingHubViewPermCheckBox').checked = pickedEmpPermList.cafeSchedulingHubView;
+		document.getElementById('cafeSchedulingHubEditPermCheckBox').checked = pickedEmpPermList.cafeSchedulingHubEdit;
 		document.getElementById('employeeListViewPermCheckBox').checked = pickedEmpPermList.employeeListView;
 		document.getElementById('updateBtn').addEventListener('click', () => updatePerms(pickedEmp));			
 	} else {
@@ -169,11 +171,13 @@ async function updatePerms(pickedEmp){
 	let dispatchCallInFormView = document.getElementById('dispatchCallInFormPermCheckBox').checked;
 	let callInHubView = document.getElementById('callInHubViewPermCheckBox').checked;
 	let transportingEquipmentForm = document.getElementById('transportingEquipmentFormPermCheckBox').checked;
+	let cafeSchedulingHubView = document.getElementById('cafeSchedulingHubViewPermCheckBox').checked;
+	let cafeSchedulingHubEdit = document.getElementById('cafeSchedulingHubEditPermCheckBox').checked;
 	let employeeListView = document.getElementById('employeeListViewPermCheckBox').checked;
 	let _id = pickedEmp._id;
 	let empFirstname = pickedEmp.firstname;
 	let empLastname = pickedEmp.lastname;
-	let data = {_id, userID, userFirstname, userLastname, empFirstname, empLastname, approveTimeOff, jobSchedulingCalendarView, dispatchCallInFormView, callInHubView, transportingEquipmentForm, employeeListView};
+	let data = {_id, userID, userFirstname, userLastname, empFirstname, empLastname, approveTimeOff, jobSchedulingCalendarView, dispatchCallInFormView, callInHubView, transportingEquipmentForm, cafeSchedulingHubView, cafeSchedulingHubEdit, employeeListView};
 
 	const postOptions = {
 		method: 'POST',
@@ -205,9 +209,11 @@ async function addPerms(pickedEmp) {
 	let dispatchCallInFormView = document.getElementById('dispatchCallInFormPermCheckBox').checked;
 	let callInHubView = document.getElementById('callInHubViewPermCheckBox').checked;
 	let transportingEquipmentForm = document.getElementById('transportingEquipmentFormPermCheckBox').checked;
+	let cafeSchedulingHubView = document.getElementById('cafeSchedulingHubViewPermCheckBox').checked;
+	let cafeSchedulingHubEdit = document.getElementById('cafeSchedulingHubEditPermCheckBox').checked;
 	let employeeListView = document.getElementById('employeeListViewPermCheckBox').checked;
 	let _id = pickedEmp._id;
-	let data = {_id, userID, userFirstname, userLastname, empFirstname, empLastname, approveTimeOff, jobSchedulingCalendarView, dispatchCallInFormView, callInHubView, transportingEquipmentForm, employeeListView};
+	let data = {_id, userID, userFirstname, userLastname, empFirstname, empLastname, approveTimeOff, jobSchedulingCalendarView, dispatchCallInFormView, callInHubView, transportingEquipmentForm, cafeSchedulingHubView, cafeSchedulingHubEdit, employeeListView};
 
 	const postOptions = {
 		method: 'POST',

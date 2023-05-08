@@ -7,7 +7,6 @@ let userPerms;
 
 function checkPerm() {
 	userPerms = JSON.parse(localStorage.getItem('userPermissions'));
-
 	if (userPerms == null || userPerms == undefined) {
 		document.getElementById("timeOffCalendarLink").setAttribute("href", "login.html");
 		document.getElementById("jobSchedulingCalendarLink").setAttribute("href", "login.html");
@@ -15,6 +14,7 @@ function checkPerm() {
 		document.getElementById("purchaseOrdersLink").setAttribute("href", "login.html");
 		document.getElementById("callInListLink").setAttribute("href", "login.html");
 		document.getElementById("transportingEquipmentLink").setAttribute("href", "login.html");
+		document.getElementById("cafeSchedulingHubLink").setAttribute("href", "login.html");
 		document.getElementById("employeeListLink").setAttribute("href", "login.html");
 		document.getElementById("repairOrdersLink").setAttribute("href", "login.html");
 	} else {
@@ -22,6 +22,7 @@ function checkPerm() {
 		dispatchCallInFormPermFunc();
 		callInHubPermFunc();
 		transportingEquipmentPermFunc();
+		cafeSchedulingHubPermFunc();
 		employeeListPermFunc();
 	}
 }
@@ -55,6 +56,18 @@ function transportingEquipmentPermFunc() {
 		let transportingEquipmentLink = document.getElementById('transportingEquipmentLink');
 		transportingEquipmentLink.setAttribute('href', '');
 		transportingEquipmentLink.addEventListener('click', permAlert);
+	}
+}
+
+function cafeSchedulingHubPermFunc() {
+	if (!userPerms.cafeSchedulingHubEdit) {
+
+	}
+
+	if (!userPerms.cafeSchedulingHubView) {
+		let cafeSchedulingHubLink = document.getElementById('cafeSchedulingHubLink');
+		cafeSchedulingHubLink.setAttribute('href', '');
+		cafeSchedulingHubLink.addEventListener('click', permAlert);
 	}
 }
 

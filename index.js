@@ -22,6 +22,8 @@ function main(){
 	permissionsDB.loadDatabase();
 	const dispatchCallInDB = new Datastore('dispatchCallIn.db');
 	dispatchCallInDB.loadDatabase();
+	const cafeSchedPcktDB = new Datastore('cafeSchedPckt.db');
+	cafeSchedPcktDB.loadDatabase();
 
 	const express = require('express');
 	const app = express();
@@ -176,7 +178,7 @@ function main(){
 		permissionsDB.loadDatabase();
 		const data = req.body;
 		try {
-			permissionsDB.update({_id: `${data._id}`}, {$set: { approveTimeOff: data.approveTimeOff, jobSchedulingCalendarView: data.jobSchedulingCalendarView, dispatchCallInFormView: data.dispatchCallInFormView, callInHubView: data.callInHubView, transportingEquipmentForm: data.transportingEquipmentForm, employeeListView: data.employeeListView}})
+			permissionsDB.update({_id: `${data._id}`}, {$set: { approveTimeOff: data.approveTimeOff, jobSchedulingCalendarView: data.jobSchedulingCalendarView, dispatchCallInFormView: data.dispatchCallInFormView, callInHubView: data.callInHubView, transportingEquipmentForm: data.transportingEquipmentForm, cafeSchedulingHubView: data.cafeSchedulingHubView, cafeSchedulingHubEdit: data.cafeSchedulingHubEdit, employeeListView: data.employeeListView}})
 			logActivity('Employee List', `${data.userID}`, `${data.userFirstname} ${data.userLastname} updated ${data.empFirstname} ${data.empLastname}'s permissions`);
 			res.json({
 				status: 'success'
@@ -570,6 +572,31 @@ function main(){
   			});
   		}
   	});
+  });
+
+  /*CAFE SCHEDULING API REQUESTS*/
+  app.post('/api/get_schedPckt_dr', (req, res) => {
+  	const data = req.body;
+  	cafeSchedPcktDB.find({fDOW: `${data.fDOW}`, lDOW: `${data.lDOW}`}).sort({ startTime: 1 }).exec(function(err, docs) {
+  			if (err) {
+    			res.json({
+    				status: 'failure'
+    			});
+    			throw new Error(err);
+    		}
+    		if (docs != null || docs != undefined){
+	  			res.end(JSON.stringify(docs));
+	  		} else {
+	  			res.json({
+	  				status: 'none'
+	  			})
+	  		}
+  	})
+  });
+
+  app.post('/api/add_schedPckt', (req, res) => {
+  	const data = req.body;
+  	cafeSchedPcktDB.insert(data);
   });
 
 }
